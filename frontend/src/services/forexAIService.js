@@ -222,20 +222,37 @@ class ForexAIService {
   }
 
   async getFredData(indicator, startDate = null, endDate = null) {
-    const url = new URL(API_CONFIG.FRED.BASE_URL + API_CONFIG.FRED.ENDPOINTS.SERIES);
-    url.searchParams.append('series_id', indicator);
-    url.searchParams.append('api_key', this.fredApiKey);
-    url.searchParams.append('file_type', 'json');
-    
-    if (startDate) url.searchParams.append('observation_start', startDate);
-    if (endDate) url.searchParams.append('observation_end', endDate);
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`FRED API error: ${response.status}`);
+    if (!this.isFredReady()) {
+      console.log('⚠️ FRED API not available, skipping economic data');
+      return null;
     }
 
-    return await response.json();
+    try {
+      console.log(`📊 Fetching FRED data for ${indicator}...`);
+      
+      const url = new URL('https://api.stlouisfed.org/fred/series/observations');
+      url.searchParams.append('series_id', indicator);
+      url.searchParams.append('api_key', this.fredApiKey);
+      url.searchParams.append('file_type', 'json');
+      url.searchParams.append('limit', '5'); // Get last 5 data points
+      url.searchParams.append('sort_order', 'desc'); // Most recent first
+      
+      if (startDate) url.searchParams.append('observation_start', startDate);
+      if (endDate) url.searchParams.append('observation_end', endDate);
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`FRED API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(`✅ FRED data received for ${indicator}`);
+      return data;
+      
+    } catch (error) {
+      console.error(`❌ Error fetching FRED data for ${indicator}:`, error);
+      return null;
+    }
   }
 
   async getLatestEconomicData() {
