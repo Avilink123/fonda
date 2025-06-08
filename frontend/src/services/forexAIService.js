@@ -771,7 +771,6 @@ Fournis une analyse fondamentale complète de cette devise.`;
     }
     return 'neutre';
   }
-  }
 
   // Parse currency analysis from AI response (Enhanced)
   parseCurrencyAnalysis(aiResponse) {
