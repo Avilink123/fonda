@@ -293,36 +293,29 @@ Maximum 300 mots. Français naturel, pas de jargon technique.`;
     try {
       console.log(`🤖 Generating fresh analysis for ${currency}...`);
       
-      const prompt = `Tu es un analyste forex français expert. Analyse la devise ${currency} avec un texte clair et professionnel.
+      const prompt = `Tu es un analyste forex français expert. Rédige une analyse claire de ${currency}.
 
-RÈGLES ABSOLUES:
-- Texte pur uniquement, AUCUN formatage (pas de **, pas de •, pas de :)
-- Phrases complètes et naturelles
-- Pas de chiffres isolés ou de codes techniques dans le texte
-- Langage accessible mais professionnel
+INSTRUCTIONS STRICTES:
+- Écris en français naturel uniquement
+- Aucun formatage technique (pas de **, •, PARAGRAPHE, etc.)
+- Sépare tes idées par des paragraphes simples
+- Pas de titres ou sous-titres dans le texte
 
-Rédige exactement ceci:
+Rédige ton analyse ainsi:
 
-TITRE: Analyse ${currency}
+Première partie: Vue d'ensemble actuelle de la devise ${currency} en 2-3 phrases.
 
-PARAGRAPHE 1 - Situation actuelle:
-[Vue d'ensemble de la devise en 2 phrases simples]
+Deuxième partie: Explique la politique monétaire de la banque centrale et les taux d'intérêt.
 
-PARAGRAPHE 2 - Politique monétaire:
-[Position de la banque centrale et taux d'intérêt en langage simple]
+Troisième partie: Décris la situation économique (inflation, emploi, croissance).
 
-PARAGRAPHE 3 - Économie:
-[Données économiques clés expliquées simplement]
+Quatrième partie: Analyse les facteurs politiques et de marché qui influencent cette devise.
 
-PARAGRAPHE 4 - Facteurs de marché:
-[Sentiment et positionnement des traders en 2 phrases]
+Cinquième partie: Donne ta perspective pour les prochaines semaines.
 
-PARAGRAPHE 5 - Perspective:
-[Prévision court terme en français naturel]
+Termine par: Recommandation [ACHAT/VENTE/NEUTRE] avec [60-95] pour cent de confiance.
 
-DERNIÈRE LIGNE: Recommandation [ACHAT/VENTE/NEUTRE] avec confiance de [60 à 90] pour cent.
-
-Maximum 250 mots. Français naturel et fluide uniquement.`;
+Maximum 300 mots. Français fluide et professionnel uniquement.`;
       
       
       const aiResponse = await this.callPerplexityAI(prompt);
