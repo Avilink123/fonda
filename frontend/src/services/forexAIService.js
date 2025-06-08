@@ -213,42 +213,13 @@ PARAGRAPHE 6 - Recommandations:
 Maximum 300 mots. Français naturel, pas de jargon technique.`;
       
       if (Object.keys(economicData).length > 0) {
-        prompt += `\n\nDonnées économiques FRED récentes à intégrer dans l'analyse:`;
+        prompt += `\n\nDonnées économiques à mentionner naturellement dans ton analyse:`;
         Object.entries(economicData).forEach(([indicator, data]) => {
-          prompt += `\n- ${indicator}: ${data.value} (${data.date})`;
+          prompt += `\n${indicator}: ${data.value} (${data.date})`;
         });
       }
-      
-      prompt += `
 
-STRUCTURE REQUISE EN FRANÇAIS:
-
-**APERÇU DU MARCHÉ:**
-[2-3 phrases sur le sentiment général et les facteurs dominants]
-
-**ANALYSE FONDAMENTALE DES PAIRES PRINCIPALES:**
-
-**EUR/USD:** [Analyse des facteurs BCE, données européennes, sentiment USD]
-**GBP/USD:** [Analyse BoE, données UK, facteurs post-Brexit]  
-**USD/JPY:** [Analyse BoJ, politique monétaire, intervention risques]
-**USD/CHF:** [Analyse BNS, safe-haven, corrélations]
-**AUD/USD:** [Analyse RBA, Chine, matières premières]
-**NZD/USD:** [Analyse RBNZ, économie NZ, correlations]
-**USD/CAD:** [Analyse BoC, pétrole, données canadiennes]
-
-**FACTEURS CLÉS À SURVEILLER:**
-• [Événement/donnée économique 1]
-• [Déclaration banque centrale/politique monétaire 2]  
-• [Tension géopolitique/facteur de risque 3]
-
-**DÉCLENCHEURS DE VOLATILITÉ:**
-[Ce qui pourrait causer des mouvements significatifs cette session]
-
-**SENTIMENT DES TRADERS:** [Ce sur quoi se concentrent les traders institutionnels]
-
-**PRÉVISIONS SESSION:** [Mouvements attendus et niveaux à surveiller]
-
-Maximum 400 mots. Langage professionnel mais accessible à un lycéen.`;
+      prompt += `\n\nRAPPEL: Texte pur seulement, pas de formatage, phrases complètes et naturelles.`;
       
       const aiResponse = await this.callPerplexityAI(prompt);
       console.log(`✅ Scheduled report generated for ${generationCheck.session}`);
