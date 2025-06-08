@@ -500,6 +500,20 @@ export const CurrencyAnalysis = () => {
                 <p className="text-slate-700 leading-relaxed">
                   {analysisData?.forecast || 'Génération de la prévision IA en cours...'}
                 </p>
+                
+                {/* Show raw AI analysis if available */}
+                {analysisData?.rawAnalysis && (
+                  <details className="mt-4">
+                    <summary className="text-sm text-blue-600 cursor-pointer hover:text-blue-800">
+                      📄 Voir l'analyse IA complète
+                    </summary>
+                    <div className="mt-3 p-4 bg-white rounded-lg border border-blue-200">
+                      <div className="text-sm text-slate-700 whitespace-pre-line">
+                        {analysisData.rawAnalysis}
+                      </div>
+                    </div>
+                  </details>
+                )}
               </div>
               </>
             )}
