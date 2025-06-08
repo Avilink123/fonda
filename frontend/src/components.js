@@ -301,158 +301,38 @@ export const DailyMarketRecap = () => {
 // Currency Analysis Component
 export const CurrencyAnalysis = () => {
   const [selectedCurrency, setSelectedCurrency] = useState('EUR');
+  const [currencyData, setCurrencyData] = useState({});
+  const [loading, setLoading] = useState(false);
   
   const currencies = {
-    EUR: {
-      name: "Euro",
-      flag: "🇪🇺",
-      currentRate: "1.0847",
-      change: "+0.23%",
-      trend: "up",
-      analysis: {
-        fundamentalScore: 78,
-        technicalScore: 65,
-        sentiment: "Haussier modéré",
-        keyFactors: [
-          "BCE maintient une politique accommodante",
-          "Inflation zone euro stable à 2.1%",
-          "PIB en croissance modérée (+0.3% T/T)",
-          "Tensions géopolitiques limitées"
-        ],
-        forecast: "L'Euro devrait maintenir sa trajectoire haussière face au Dollar US, soutenu par une politique monétaire BCE équilibrée et des fondamentaux économiques solides.",
-        aiRating: "ACHAT",
-        confidence: 76
-      }
-    },
-    USD: {
-      name: "Dollar US",
-      flag: "🇺🇸",
-      currentRate: "1.0000",
-      change: "-0.18%",
-      trend: "down",
-      analysis: {
-        fundamentalScore: 72,
-        technicalScore: 58,
-        sentiment: "Baissier léger",
-        keyFactors: [
-          "Fed en pause dans son cycle de hausse",
-          "Inflation américaine en décélération",
-          "Marché du travail robuste mais modéré",
-          "Incertitudes sur la politique fiscale"
-        ],
-        forecast: "Le Dollar US fait face à des vents contraires à court terme, mais reste soutenu par des fondamentaux économiques solides à long terme.",
-        aiRating: "NEUTRE",
-        confidence: 68
-      }
-    },
-    GBP: {
-      name: "Livre Sterling",
-      flag: "🇬🇧",
-      currentRate: "1.2734",
-      change: "+0.45%",
-      trend: "up",
-      analysis: {
-        fundamentalScore: 71,
-        technicalScore: 73,
-        sentiment: "Haussier",
-        keyFactors: [
-          "BoE maintient une approche hawkish",
-          "Inflation UK en baisse contrôlée",
-          "Post-Brexit: stabilisation commerciale",
-          "Croissance économique résiliente"
-        ],
-        forecast: "La Livre Sterling bénéficie d'une politique monétaire ferme de la BoE et d'une amélioration des relations commerciales post-Brexit.",
-        aiRating: "ACHAT",
-        confidence: 73
-      }
-    },
-    JPY: {
-      name: "Yen Japonais",
-      flag: "🇯🇵",
-      currentRate: "156.89",
-      change: "-0.31%",
-      trend: "down",
-      analysis: {
-        fundamentalScore: 54,
-        technicalScore: 48,
-        sentiment: "Baissier",
-        keyFactors: [
-          "BoJ maintient des taux ultra-bas",
-          "Différentiel de taux défavorable",
-          "Économie en croissance lente",
-          "Intervention possible des autorités"
-        ],
-        forecast: "Le Yen reste sous pression face aux autres devises majeures en raison de la politique monétaire ultra-accommodante de la BoJ.",
-        aiRating: "VENTE",
-        confidence: 81
-      }
-    },
-    CHF: {
-      name: "Franc Suisse",
-      flag: "🇨🇭",
-      currentRate: "0.8954",
-      change: "+0.12%",
-      trend: "up",
-      analysis: {
-        fundamentalScore: 82,
-        technicalScore: 77,
-        sentiment: "Haussier stable",
-        keyFactors: [
-          "Valeur refuge traditionnelle",
-          "BNS politique équilibrée",
-          "Économie stable et résiliente",
-          "Inflation contrôlée"
-        ],
-        forecast: "Le Franc Suisse maintient son attrait de valeur refuge avec des fondamentaux économiques exceptionnels.",
-        aiRating: "ACHAT",
-        confidence: 79
-      }
-    },
-    CAD: {
-      name: "Dollar Canadien",
-      flag: "🇨🇦",
-      currentRate: "1.3642",
-      change: "+0.08%",
-      trend: "up",
-      analysis: {
-        fundamentalScore: 69,
-        technicalScore: 62,
-        sentiment: "Neutre haussier",
-        keyFactors: [
-          "BoC en mode attentiste",
-          "Prix du pétrole soutenus",
-          "Économie liée aux matières premières",
-          "Relations commerciales stables"
-        ],
-        forecast: "Le Dollar Canadien est soutenu par les prix des matières premières mais reste sensible aux politiques de la BoC.",
-        aiRating: "NEUTRE",
-        confidence: 64
-      }
-    },
-    AUD: {
-      name: "Dollar Australien",
-      flag: "🇦🇺",
-      currentRate: "0.6698",
-      change: "+0.27%",
-      trend: "up",
-      analysis: {
-        fundamentalScore: 66,
-        technicalScore: 71,
-        sentiment: "Haussier modéré",
-        keyFactors: [
-          "RBA politique accommodante",
-          "Économie liée à la Chine",
-          "Prix des matières premières favorables",
-          "Tourisme en reprise"
-        ],
-        forecast: "Le Dollar Australien bénéficie de la reprise économique chinoise et des prix des matières premières soutenus.",
-        aiRating: "ACHAT",
-        confidence: 71
-      }
+    EUR: { name: "Euro", flag: "🇪🇺", currentRate: "1.0847", change: "+0.23%", trend: "up" },
+    USD: { name: "Dollar US", flag: "🇺🇸", currentRate: "1.0000", change: "-0.18%", trend: "down" },
+    GBP: { name: "Livre Sterling", flag: "🇬🇧", currentRate: "1.2734", change: "+0.45%", trend: "up" },
+    JPY: { name: "Yen Japonais", flag: "🇯🇵", currentRate: "156.89", change: "-0.31%", trend: "down" },
+    CHF: { name: "Franc Suisse", flag: "🇨🇭", currentRate: "0.8954", change: "+0.12%", trend: "up" },
+    CAD: { name: "Dollar Canadien", flag: "🇨🇦", currentRate: "1.3642", change: "+0.08%", trend: "up" },
+    AUD: { name: "Dollar Australien", flag: "🇦🇺", currentRate: "0.6698", change: "+0.27%", trend: "up" }
+  };
+
+  useEffect(() => {
+    loadCurrencyAnalysis(selectedCurrency);
+  }, [selectedCurrency]);
+
+  const loadCurrencyAnalysis = async (currency) => {
+    setLoading(true);
+    try {
+      console.log(`🔄 Loading analysis for ${currency}...`);
+      const analysis = await forexAIService.generateCurrencyAnalysis(currency);
+      setCurrencyData(prev => ({...prev, [currency]: analysis}));
+      console.log(`✅ Analysis loaded for ${currency}:`, analysis.source || 'Mock data');
+    } catch (error) {
+      console.error(`❌ Error loading analysis for ${currency}:`, error);
     }
+    setLoading(false);
   };
 
   const selectedCurr = currencies[selectedCurrency];
+  const analysisData = currencyData[selectedCurrency];
 
   return (
     <section id="devises" className="py-20 bg-white">
