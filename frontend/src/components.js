@@ -254,18 +254,32 @@ export const DailyMarketRecap = () => {
             </div>
 
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
-                <h4 className="text-lg font-semibold text-slate-900 mb-3">Résumé Exécutif IA</h4>
-                <p className="text-slate-700 leading-relaxed">{marketRecapData.summary}</p>
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-slate-900">Aperçu du Marché</h4>
+                  {marketRecapData.status && (
+                    <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium">
+                      {marketRecapData.status}
+                    </span>
+                  )}
+                </div>
                 
-                {/* Show raw AI report if available */}
+                <div className="prose prose-slate max-w-none">
+                  <p className="text-slate-700 leading-relaxed text-base">
+                    {marketRecapData.summary}
+                  </p>
+                </div>
+                
+                {/* Clean AI report display */}
                 {marketRecapData.rawReport && (
                   <details className="mt-4">
-                    <summary className="text-sm text-blue-600 cursor-pointer hover:text-blue-800">
-                      📄 Voir le rapport IA complet
+                    <summary className="text-sm text-blue-600 cursor-pointer hover:text-blue-800 font-medium">
+                      📄 Rapport d'analyse complet
                     </summary>
                     <div className="mt-3 p-4 bg-white rounded-lg border border-blue-200">
-                      <div className="text-sm text-slate-700 whitespace-pre-line">
-                        {marketRecapData.rawReport}
+                      <div className="prose prose-sm prose-slate max-w-none">
+                        <div className="text-slate-700 whitespace-pre-line leading-relaxed">
+                          {marketRecapData.rawReport}
+                        </div>
                       </div>
                     </div>
                   </details>
@@ -273,13 +287,16 @@ export const DailyMarketRecap = () => {
                 
                 {marketRecapData.economicData && Object.keys(marketRecapData.economicData).length > 0 && (
                   <div className="mt-4 p-4 bg-white rounded-lg">
-                    <h5 className="text-sm font-semibold text-slate-800 mb-2">📊 Données Économiques FRED (Officielles)</h5>
+                    <h5 className="text-sm font-semibold text-slate-800 mb-3 flex items-center">
+                      <span className="mr-2">📊</span> 
+                      Données Économiques Officielles (FRED)
+                    </h5>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
                       {Object.entries(marketRecapData.economicData).map(([indicator, data]) => (
-                        <div key={indicator} className="bg-slate-50 p-2 rounded">
-                          <div className="font-medium text-slate-700">{indicator}</div>
-                          <div className="text-blue-600 font-semibold">{data.value}</div>
-                          <div className="text-slate-500">{data.date}</div>
+                        <div key={indicator} className="bg-slate-50 p-3 rounded-lg border">
+                          <div className="font-semibold text-slate-700 text-xs uppercase tracking-wide">{indicator}</div>
+                          <div className="text-blue-600 font-bold text-sm mt-1">{data.value}</div>
+                          <div className="text-slate-500 text-xs">{data.date}</div>
                         </div>
                       ))}
                     </div>
