@@ -682,81 +682,95 @@ Fournis une analyse fondamentale complète de cette devise.`;
     
     return sections;
   }
+  // Parse AI generated report into structured data (Enhanced & Professional)
+  parseAIReport(aiResponse) {
     try {
-      // Extract sections using regex patterns for new structure
-      const overviewMatch = aiResponse.match(/\*\*APERÇU DU MARCHÉ:\*\*(.*?)(?=\*\*ANALYSE FONDAMENTALE|$)/s);
-      const sentimentMatch = aiResponse.match(/\*\*SENTIMENT DES TRADERS:\*\*(.*?)(?=\*\*PRÉVISIONS|$)/s);
-      const forecastMatch = aiResponse.match(/\*\*PRÉVISIONS SESSION:\*\*(.*?)(?=\*\*|$)/s);
-      const volatilityMatch = aiResponse.match(/\*\*DÉCLENCHEURS DE VOLATILITÉ:\*\*(.*?)(?=\*\*SENTIMENT|$)/s);
+      // Use the clean extraction method
+      const sections = this.extractCleanSections(aiResponse);
       
-      // Extract currency pair analyses
-      const pairAnalyses = [];
-      const pairMatches = aiResponse.match(/\*\*([A-Z]{3}\/[A-Z]{3}):\*\*(.*?)(?=\*\*[A-Z]{3}\/[A-Z]{3}:|\*\*FACTEURS|$)/gs);
-      if (pairMatches) {
-        pairMatches.forEach(match => {
-          const pairMatch = match.match(/\*\*([A-Z]{3}\/[A-Z]{3}):\*\*(.*)/s);
-          if (pairMatch) {
-            pairAnalyses.push({
-              title: `Analyse ${pairMatch[1]}`,
-              impact: "neutre",
-              description: pairMatch[2].trim()
-            });
-          }
-        });
-      }
-      
-      // Extract key factors
-      const factorsSection = aiResponse.match(/\*\*FACTEURS CLÉS À SURVEILLER:\*\*(.*?)(?=\*\*DÉCLENCHEURS|$)/s)?.[1] || '';
-      const factorMatches = factorsSection.match(/•\s*([^\n•]+)/g);
+      // Build professional key points from currency analyses
       const keyPoints = [];
       
-      if (factorMatches && factorMatches.length > 0) {
-        factorMatches.forEach(factor => {
-          const cleaned = factor.replace(/•\s*/, '').trim();
-          if (cleaned) {
+      // Add major currency pair insights
+      if (sections.eurUsd) {
+        keyPoints.push({
+          title: "EUR/USD",
+          impact: this.determinePairImpact(sections.eurUsd),
+          description: sections.eurUsd
+        });
+      }
+      
+      if (sections.gbpUsd) {
+        keyPoints.push({
+          title: "GBP/USD", 
+          impact: this.determinePairImpact(sections.gbpUsd),
+          description: sections.gbpUsd
+        });
+      }
+      
+      if (sections.usdJpy) {
+        keyPoints.push({
+          title: "USD/JPY",
+          impact: this.determinePairImpact(sections.usdJpy),
+          description: sections.usdJpy
+        });
+      }
+      
+      // If no pair analyses, extract factors as key points
+      if (keyPoints.length === 0 && sections.factors) {
+        const factorsList = sections.factors.split('•').filter(f => f.trim());
+        factorsList.forEach((factor, index) => {
+          if (factor.trim() && index < 3) {
             keyPoints.push({
-              title: "Facteur clé à surveiller",
+              title: "Facteur clé",
               impact: "important",
-              description: cleaned
+              description: factor.trim()
             });
           }
         });
       }
       
-      // Add pair analyses to key points
-      if (pairAnalyses.length > 0) {
-        keyPoints.push(...pairAnalyses.slice(0, 3)); // Limit to 3 main pairs
-      }
-      
-      // If no key points found, create default ones
+      // Default professional key points if none found
       if (keyPoints.length === 0) {
         keyPoints.push(
-          { title: "Analyse fondamentale approfondie", impact: "positif", description: "Rapport professionnel généré par IA avec analyse de toutes les paires majeures" },
-          { title: "Facteurs macroéconomiques", impact: "neutre", description: "Intégration des données économiques et décisions des banques centrales" },
-          { title: "Sentiment institutionnel", impact: "important", description: "Analyse du positionnement des traders professionnels" }
+          { title: "Analyse fondamentale", impact: "positif", description: "Rapport professionnel généré avec analyse complète des facteurs macroéconomiques" },
+          { title: "Surveillance des banques centrales", impact: "neutre", description: "Évaluation des politiques monétaires et de leur impact sur les devises" },
+          { title: "Sentiment institutionnel", impact: "important", description: "Analyse du positionnement des traders professionnels et des flux de capitaux" }
         );
       }
       
       return {
-        summary: overviewMatch?.[1]?.trim() || aiResponse.substring(0, 300) + "...",
-        keyPoints: keyPoints,
-        sentiment: sentimentMatch?.[1]?.trim() || "Analyse approfondie générée",
-        mainTrend: volatilityMatch?.[1]?.trim() || "Surveillance des déclencheurs de volatilité",
-        recommendations: forecastMatch?.[1]?.trim() || "Voir prévisions détaillées dans le rapport complet"
+        summary: sections.overview || this.cleanText(aiResponse).substring(0, 300) + "...",
+        keyPoints: keyPoints.slice(0, 3), // Limit to 3 for clean display
+        sentiment: sections.sentiment || "Analyse professionnelle en cours",
+        mainTrend: sections.volatility || "Surveillance des déclencheurs de volatilité",
+        recommendations: sections.forecast || "Voir analyse détaillée pour recommandations spécifiques"
       };
       
     } catch (error) {
       console.error('❌ Error parsing enhanced AI report:', error);
       return {
-        summary: aiResponse,
+        summary: this.cleanText(aiResponse),
         keyPoints: [
-          { title: "Rapport IA approfondi", impact: "neutre", description: "Analyse fondamentale complète disponible" }
+          { title: "Rapport professionnel", impact: "neutre", description: "Analyse fondamentale complète disponible" }
         ],
-        sentiment: "Analyse professionnelle générée",
-        mainTrend: "Recherche fondamentale avancée",
-        recommendations: "Voir rapport complet pour détails"
+        sentiment: "Analyse générée par IA",
+        mainTrend: "Recherche fondamentale approfondie",
+        recommendations: "Consulter le rapport détaillé"
       };
     }
+  }
+
+  // Determine impact based on content analysis
+  determinePairImpact(text) {
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes('hausse') || lowerText.includes('positif') || lowerText.includes('soutien') || lowerText.includes('fort')) {
+      return 'positif';
+    } else if (lowerText.includes('baisse') || lowerText.includes('négatif') || lowerText.includes('pression') || lowerText.includes('faible')) {
+      return 'négatif';
+    }
+    return 'neutre';
+  }
   }
 
   // Parse currency analysis from AI response (Enhanced)
