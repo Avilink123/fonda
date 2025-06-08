@@ -256,21 +256,44 @@ class ForexAIService {
   }
 
   async getLatestEconomicData() {
+    if (!this.isFredReady()) {
+      console.log('⚠️ FRED API not ready, skipping economic data');
+      return {};
+    }
+
+    console.log('📊 Fetching latest economic indicators from FRED...');
+    
     const indicators = [
-      'FEDFUNDS', 'CPIAUCSL', 'UNRATE', // US data
-      'ECBREFI', 'EA19CPHAINMEI', // EU data
-      'JPNINTDSGDPM193N', 'GBRCPIALLMINMEI' // Japan, UK data
+      'FEDFUNDS',      // US Federal Funds Rate
+      'CPIAUCSL',      // US CPI
+      'UNRATE',        // US Unemployment Rate
+      'GDPC1',         // US Real GDP
+      'DEXUSEU',       // US/Euro Exchange Rate
+      'DEXJPUS',       // Japan/US Exchange Rate
+      'DEXUSUK'        // US/UK Exchange Rate
     ];
 
     const data = {};
     for (const indicator of indicators) {
       try {
-        data[indicator] = await this.getFredData(indicator);
+        const result = await this.getFredData(indicator);
+        if (result && result.observations && result.observations.length > 0) {
+          // Get the most recent non-null value
+          const validObs = result.observations.filter(obs => obs.value !== '.');
+          if (validObs.length > 0) {
+            data[indicator] = {
+              value: validObs[0].value,
+              date: validObs[0].date,
+              series_id: indicator
+            };
+          }
+        }
       } catch (error) {
-        console.error(`Error fetching ${indicator}:`, error);
+        console.error(`❌ Error fetching ${indicator}:`, error);
       }
     }
 
+    console.log('✅ Economic data fetched from FRED:', Object.keys(data));
     return data;
   }
 
