@@ -200,33 +200,34 @@ Make sure your report is easy to understand by a high school student. The report
       
       prompt += `
 
-STRUCTURE REQUISE:
+STRUCTURE REQUISE EN FRANÇAIS:
 
-**RÉSUMÉ EXÉCUTIF:**
-[2-3 phrases sur la situation pour cette session de trading]
+**APERÇU DU MARCHÉ:**
+[2-3 phrases sur le sentiment général et les facteurs dominants]
 
-**POINTS CLÉS DE LA SESSION:**
+**ANALYSE FONDAMENTALE DES PAIRES PRINCIPALES:**
 
-1. **[Titre impact positif]**
-   Description claire et impact sur devises concernées.
+**EUR/USD:** [Analyse des facteurs BCE, données européennes, sentiment USD]
+**GBP/USD:** [Analyse BoE, données UK, facteurs post-Brexit]  
+**USD/JPY:** [Analyse BoJ, politique monétaire, intervention risques]
+**USD/CHF:** [Analyse BNS, safe-haven, corrélations]
+**AUD/USD:** [Analyse RBA, Chine, matières premières]
+**NZD/USD:** [Analyse RBNZ, économie NZ, correlations]
+**USD/CAD:** [Analyse BoC, pétrole, données canadiennes]
 
-2. **[Titre impact négatif]** 
-   Description claire et impact sur devises concernées.
+**FACTEURS CLÉS À SURVEILLER:**
+• [Événement/donnée économique 1]
+• [Déclaration banque centrale/politique monétaire 2]  
+• [Tension géopolitique/facteur de risque 3]
 
-3. **[Titre impact important]**
-   Description claire et impact sur devises concernées.
+**DÉCLENCHEURS DE VOLATILITÉ:**
+[Ce qui pourrait causer des mouvements significatifs cette session]
 
-**SENTIMENT GLOBAL:** [Optimiste/Pessimiste/Neutre pour cette session]
+**SENTIMENT DES TRADERS:** [Ce sur quoi se concentrent les traders institutionnels]
 
-**TENDANCE PRINCIPALE:** [Tendance attendue pour cette session]
+**PRÉVISIONS SESSION:** [Mouvements attendus et niveaux à surveiller]
 
-**RECOMMANDATIONS:**
-- [Conseil 1 spécifique à cette session]
-- [Conseil 2 spécifique à cette session]
-
-Concentre-toi sur les paires actives pendant cette session.
-Écris un français professionnel mais accessible.
-Maximum 250 mots total.`;
+Maximum 400 mots. Langage professionnel mais accessible à un lycéen.`;
       
       const aiResponse = await this.callPerplexityAI(prompt);
       console.log(`✅ Scheduled report generated for ${generationCheck.session}`);
