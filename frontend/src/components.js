@@ -242,10 +242,25 @@ export const DailyMarketRecap = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
-            <h4 className="text-lg font-semibold text-slate-900 mb-3">Résumé Exécutif IA</h4>
-            <p className="text-slate-700 leading-relaxed">{marketRecapData.summary}</p>
-          </div>
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                <h4 className="text-lg font-semibold text-slate-900 mb-3">Résumé Exécutif IA</h4>
+                <p className="text-slate-700 leading-relaxed">{marketRecapData.summary}</p>
+                
+                {marketRecapData.economicData && Object.keys(marketRecapData.economicData).length > 0 && (
+                  <div className="mt-4 p-4 bg-white rounded-lg">
+                    <h5 className="text-sm font-semibold text-slate-800 mb-2">📊 Données Économiques FRED (Officielles)</h5>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                      {Object.entries(marketRecapData.economicData).map(([indicator, data]) => (
+                        <div key={indicator} className="bg-slate-50 p-2 rounded">
+                          <div className="font-medium text-slate-700">{indicator}</div>
+                          <div className="text-blue-600 font-semibold">{data.value}</div>
+                          <div className="text-slate-500">{data.date}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
