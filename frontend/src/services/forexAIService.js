@@ -174,7 +174,22 @@ class ForexAIService {
           break;
       }
       
-      let prompt = `Tu es un analyste forex senior. Rédige un rapport ${generationCheck.session} pour le ${new Date().toLocaleDateString('fr-FR')}. ${sessionContext}`;
+      let prompt = `Act as a professional forex analyst creating a market overview report for ${generationCheck.session}. 
+
+Analyze the current market sentiment toward the major currency pairs (EUR/USD, GBP/USD, USD/JPY, USD/CHF, AUD/USD, NZD/USD, USD/CAD). 
+
+Include fundamental insights such as:
+- Key economic data releases and their impact
+- Central bank statements and monetary policy decisions
+- Geopolitical tensions affecting currencies
+- Market trends and institutional positioning
+- Risk sentiment and safe-haven flows
+
+${sessionContext}
+
+Highlight what traders are paying attention to, and forecast potential movement or volatility triggers for this upcoming trading session.
+
+Make sure your report is easy to understand by a high school student. The report must be in French.`;
       
       if (Object.keys(economicData).length > 0) {
         prompt += `\n\nDonnées économiques récentes FRED:`;
