@@ -600,7 +600,7 @@ Fournis une analyse fondamentale complète de cette devise.`;
     };
   }
 
-  // Clean text from markdown formatting
+  // Clean text from markdown formatting (Enhanced)
   cleanText(text) {
     if (!text) return "";
     
@@ -612,6 +612,10 @@ Fournis une analyse fondamentale complète de cette devise.`;
       .replace(/^\s*[-•]\s+/gm, '• ')     // Clean bullet points
       .replace(/^\s*\d+\.\s+/gm, '')      // Remove numbered lists
       .replace(/\[([^\]]+)\]/g, '$1')     // Remove brackets
+      .replace(/PARAGRAPHE\s*\d+\s*[-:]?\s*/gi, '') // Remove PARAGRAPHE mentions
+      .replace(/TITRE\s*[-:]?\s*/gi, '')   // Remove TITRE mentions
+      .replace(/Analyse\s+[A-Z]{3}\s*[-:]?\s*/gi, '') // Remove "Analyse EUR:" patterns
+      .replace(/([A-Z]{3}\/[A-Z]{3})\s*[-:]?\s*/g, '$1: ') // Clean currency pair formatting
       .replace(/\s{2,}/g, ' ')            // Multiple spaces to single
       .replace(/\n{3,}/g, '\n\n')         // Multiple newlines to double
       .trim();
