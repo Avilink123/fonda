@@ -293,48 +293,37 @@ Maximum 300 mots. Français naturel, pas de jargon technique.`;
     try {
       console.log(`🤖 Generating fresh analysis for ${currency}...`);
       
-      const prompt = `Act as a professional forex analyst. Conduct a comprehensive fundamental analysis of ${currency} currency.
+      const prompt = `Tu es un analyste forex français expert. Analyse la devise ${currency} avec un texte clair et professionnel.
 
-Analyze current market sentiment and factors affecting ${currency}:
-- Central bank monetary policy and recent statements
-- Key economic indicators (inflation, employment, GDP, trade balance)
-- Political stability and government policies  
-- Market positioning and institutional flows
-- Risk sentiment impact on the currency
-- Correlations with commodities (if applicable)
-- Technical levels and market structure
+RÈGLES ABSOLUES:
+- Texte pur uniquement, AUCUN formatage (pas de **, pas de •, pas de :)
+- Phrases complètes et naturelles
+- Pas de chiffres isolés ou de codes techniques dans le texte
+- Langage accessible mais professionnel
 
-Provide specific insights that matter to forex traders right now.
+Rédige exactement ceci:
 
-Make sure your analysis is easy to understand by a high school student. The analysis must be in French.
+TITRE: Analyse ${currency}
 
-STRUCTURE REQUISE EN FRANÇAIS:
+PARAGRAPHE 1 - Situation actuelle:
+[Vue d'ensemble de la devise en 2 phrases simples]
 
-**SITUATION ACTUELLE ${currency}:**
-[Vue d'ensemble de la devise aujourd'hui - 2 phrases]
+PARAGRAPHE 2 - Politique monétaire:
+[Position de la banque centrale et taux d'intérêt en langage simple]
 
-**ANALYSE FONDAMENTALE:**
+PARAGRAPHE 3 - Économie:
+[Données économiques clés expliquées simplement]
 
-**Politique Monétaire:** [Position de la banque centrale, taux, orientation future]
-**Économie:** [Données clés - inflation, emploi, croissance, principales tendances]  
-**Facteurs Politiques:** [Stabilité, élections, réformes, impact sur devise]
-**Sentiment de Marché:** [Positionnement institutionnel, flux de capitaux, risk-on/risk-off]
+PARAGRAPHE 4 - Facteurs de marché:
+[Sentiment et positionnement des traders en 2 phrases]
 
-**CATALYSEURS À SURVEILLER:**
-• [Événement/donnée à venir 1]
-• [Décision politique/monétaire 2]
-• [Facteur externe/corrélation 3]
+PARAGRAPHE 5 - Perspective:
+[Prévision court terme en français naturel]
 
-**ANALYSE TECHNIQUE:**
-[Niveaux clés, tendance, supports/résistances principales]
+DERNIÈRE LIGNE: Recommandation [ACHAT/VENTE/NEUTRE] avec confiance de [60 à 90] pour cent.
 
-**PRÉVISION ${currency}:**
-[Perspective court/moyen terme basée sur l'analyse fondamentale - 2-3 phrases]
-
-**SCORE FONDAMENTAL:** [1-100] **SCORE TECHNIQUE:** [1-100]
-**RECOMMANDATION:** [ACHAT/VENTE/NEUTRE] **CONFIANCE:** [1-100]%
-
-Maximum 300 mots. Langage professionnel mais accessible.`;
+Maximum 250 mots. Français naturel et fluide uniquement.`;
+      
       
       const aiResponse = await this.callPerplexityAI(prompt);
       console.log(`✅ Fresh currency analysis generated for ${currency}`);
