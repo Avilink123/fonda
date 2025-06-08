@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { ChevronDownIcon, TrendingUpIcon, TrendingDownIcon, ChartBarIcon, NewspaperIcon, CalendarIcon, CurrencyDollarIcon, GlobeAltIcon, ClockIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import forexAIService from './services/forexAIService';
 
+// Utility function to clean markdown formatting
+const cleanMarkdown = (text) => {
+  if (!text) return "";
+  
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold **text**
+    .replace(/\*([^*]+)\*/g, '$1')      // Remove italic *text*
+    .replace(/#{1,6}\s+/g, '')          // Remove headers
+    .replace(/^\s*[-•]\s+/gm, '• ')     // Clean bullet points
+    .replace(/^\s*\d+\.\s+/gm, '')      // Remove numbered lists
+    .replace(/\[([^\]]+)\]/g, '$1')     // Remove brackets
+    .replace(/\s{2,}/g, ' ')            // Multiple spaces to single
+    .replace(/\n{3,}/g, '\n\n')         // Multiple newlines to double
+    .trim();
+};
+
 // Navigation Component
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
