@@ -20,9 +20,94 @@ class ForexAIService {
     }
   }
 
-  // Check if service is ready
-  isReady() {
-    return this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key';
+  // Check if we should generate a new report based on time
+  shouldGenerateNewReport() {
+    const now = new Date();
+    const currentHour = now.getUTCHours();
+    const currentMinute = now.getUTCMinutes();
+    
+    // Check if we're within 30 minutes of any scheduled report time
+    for (const reportTime of this.reportTimes) {
+      const timeDiff = Math.abs((currentHour * 60 + currentMinute) - (reportTime.hour * 60 + reportTime.minute));
+      if (timeDiff <= 30) { // Within 30 minutes window
+        return { should: true, session: reportTime.name };
+      }
+    }
+    
+    return { should: false, session: null };
+  }
+
+  // Get the last cached report or determine if we need a new one
+  getLastReportInfo() {
+    const cached = localStorage.getItem('forexai_daily_report');
+    if (!cached) return { needsGeneration: true, lastReport: null };
+    
+    try {
+      const data = JSON.parse(cached);
+      const reportDate = new Date(data.timestamp);
+      const now = new Date();
+      
+      // Check if report is from today
+      const isToday = reportDate.toDateString() === now.toDateString();
+      
+      if (!isToday) {
+        return { needsGeneration: true, lastReport: null };
+      }
+      
+      // Check if we're in a generation window and haven't generated for this time slot
+      const generationCheck = this.shouldGenerateNewReport();
+      if (generationCheck.should) {
+        const reportHour = reportDate.getUTCHours();
+        const currentTimeSlot = this.getCurrentTimeSlot();
+        
+        // If the cached report is not from the current time slot, generate new one
+        if (this.getReportTimeSlot(reportHour) !== currentTimeSlot) {
+          return { needsGeneration: true, lastReport: data };
+        }
+      }
+      
+      return { needsGeneration: false, lastReport: data };
+      
+    } catch (error) {
+      console.error('Error parsing cached report:', error);
+      return { needsGeneration: true, lastReport: null };
+    }
+  }
+
+  // Get current time slot (0, 1, or 2)
+  getCurrentTimeSlot() {
+    const hour = new Date().getUTCHours();
+    if (hour >= 7 && hour < 12) return 0;  // Morning slot
+    if (hour >= 12 && hour < 17) return 1; // Afternoon slot
+    if (hour >= 17 || hour < 7) return 2;  // Evening slot
+    return 0;
+  }
+
+  // Get time slot for a given hour
+  getReportTimeSlot(hour) {
+    if (hour >= 7 && hour < 12) return 0;
+    if (hour >= 12 && hour < 17) return 1;
+    if (hour >= 17 || hour < 7) return 2;
+    return 0;
+  }
+
+  // Get next report time
+  getNextReportTime() {
+    const now = new Date();
+    const currentHour = now.getUTCHours();
+    const currentMinute = now.getUTCMinutes();
+    
+    for (const reportTime of this.reportTimes) {
+      const reportMinutes = reportTime.hour * 60 + reportTime.minute;
+      const currentMinutes = currentHour * 60 + currentMinute;
+      
+      if (reportMinutes > currentMinutes) {
+        return `${reportTime.hour.toString().padStart(2, '0')}:${reportTime.minute.toString().padStart(2, '0')} GMT (${reportTime.name})`;
+      }
+    }
+    
+    // If no more reports today, next is tomorrow at 7:00
+    return "07:00 GMT demain (Ouverture Européenne)";
   }
 
   // Check if FRED is ready
