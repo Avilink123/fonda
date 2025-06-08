@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { forexAIService } from '../services/forexAIService';
 import { ChevronDownIcon, TrendingUpIcon, TrendingDownIcon, ChartBarIcon, NewspaperIcon, CalendarIcon, CurrencyDollarIcon, GlobeAltIcon, ClockIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import forexAIService from './services/forexAIService';
 
 // Navigation Component
 export const Navigation = () => {
