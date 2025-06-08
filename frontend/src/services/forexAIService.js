@@ -178,22 +178,39 @@ class ForexAIService {
           break;
       }
       
-      let prompt = `Act as a professional forex analyst creating a market overview report for ${generationCheck.session}. 
+      let prompt = `Tu es un analyste forex français réputé. Rédige un rapport de marché professionnel pour ${generationCheck.session}.
 
-Analyze the current market sentiment toward the major currency pairs (EUR/USD, GBP/USD, USD/JPY, USD/CHF, AUD/USD, NZD/USD, USD/CAD). 
-
-Include fundamental insights such as:
-- Key economic data releases and their impact
-- Central bank statements and monetary policy decisions
-- Geopolitical tensions affecting currencies
-- Market trends and institutional positioning
-- Risk sentiment and safe-haven flows
+RÈGLES ABSOLUES:
+- Texte pur uniquement, AUCUN formatage (pas de **, pas de •, pas de :, pas de chiffres à la fin)
+- Phrases complètes et fluides
+- Structure claire avec paragraphes séparés
+- Langage accessible à un lycéen mais professionnel
 
 ${sessionContext}
 
-Highlight what traders are paying attention to, and forecast potential movement or volatility triggers for this upcoming trading session.
+Rédige exactement ceci:
 
-Make sure your report is easy to understand by a high school student. The report must be in French.`;
+TITRE: Rapport ${generationCheck.session}
+
+PARAGRAPHE 1 - Vue d'ensemble:
+[2-3 phrases sur la situation générale des marchés forex aujourd'hui]
+
+PARAGRAPHE 2 - EUR/USD:
+[Analyse complète en 2 phrases: facteurs BCE, économie européenne, sentiment USD]
+
+PARAGRAPHE 3 - GBP/USD:
+[Analyse complète en 2 phrases: facteurs BoE, données UK, Brexit]
+
+PARAGRAPHE 4 - USD/JPY:
+[Analyse complète en 2 phrases: politique BoJ, intervention, yen carry trade]
+
+PARAGRAPHE 5 - Facteurs de risque:
+[3 éléments à surveiller cette session, expliqués simplement]
+
+PARAGRAPHE 6 - Recommandations:
+[2 conseils concrets pour les traders aujourd'hui]
+
+Maximum 300 mots. Français naturel, pas de jargon technique.`;
       
       if (Object.keys(economicData).length > 0) {
         prompt += `\n\nDonnées économiques FRED récentes à intégrer dans l'analyse:`;
