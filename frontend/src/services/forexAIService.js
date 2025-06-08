@@ -116,44 +116,40 @@ Maximum 300 mots total.`;
     try {
       console.log(`🤖 Generating real-time analysis for ${currency}...`);
       
-      const prompt = `Analyse fondamentale complète de la devise ${currency} aujourd'hui.
-      
-      Fournis une analyse détaillée incluant:
-      1. Score fondamental (0-100)
-      2. Score technique (0-100) 
-      3. Sentiment actuel du marché
-      4. Facteurs clés influençant la devise (4 points maximum)
-      5. Prévision et recommandation (ACHAT/VENTE/NEUTRE)
-      6. Niveau de confiance (0-100)
-      
-      Réponds en JSON avec cette structure exacte:
-      {
-        "fundamentalScore": nombre_0_100,
-        "technicalScore": nombre_0_100,
-        "sentiment": "sentiment_description",
-        "keyFactors": ["facteur1", "facteur2", "facteur3", "facteur4"],
-        "forecast": "prévision_détaillée",
-        "aiRating": "ACHAT/VENTE/NEUTRE",
-        "confidence": nombre_0_100
-      }`;
+      const prompt = `Tu es un analyste forex expert. Analyse la devise ${currency} aujourd'hui de manière professionnelle et accessible.
+
+STRUCTURE REQUISE:
+
+**Score Fondamental:** [nombre entre 1-100]
+**Score Technique:** [nombre entre 1-100]  
+**Sentiment:** [Description courte du sentiment actuel]
+
+**Facteurs Clés:**
+• [Facteur économique 1]
+• [Facteur économique 2] 
+• [Facteur économique 3]
+• [Facteur politique/monetary 4]
+
+**Prévision:**
+[Paragraphe de 2-3 phrases expliquant les perspectives à court/moyen terme pour cette devise, en français simple mais professionnel]
+
+**Recommandation:** [ACHAT/VENTE/NEUTRE]
+**Confiance:** [nombre entre 1-100]%
+
+Sois précis, factuel, et accessible à un lycéen. Maximum 150 mots.`;
       
       const aiResponse = await this.callPerplexityAI(prompt);
       console.log(`✅ Currency analysis generated for ${currency}`);
       
-      try {
-        const parsed = JSON.parse(aiResponse);
-        return {
-          ...parsed,
-          timestamp: new Date().toISOString(),
-          source: 'Perplexity AI'
-        };
-      } catch (parseError) {
-        console.log('⚠️ Could not parse JSON for currency analysis');
-        const mockData = this.getMockCurrencyAnalysis(currency);
-        mockData.forecast = aiResponse;
-        mockData.source = 'Perplexity AI';
-        return mockData;
-      }
+      // Parse the structured response
+      const parsedAnalysis = this.parseCurrencyAnalysis(aiResponse);
+      
+      return {
+        ...parsedAnalysis,
+        timestamp: new Date().toISOString(),
+        source: 'Perplexity AI',
+        rawAnalysis: aiResponse
+      };
       
     } catch (error) {
       console.error(`❌ Error analyzing ${currency}:`, error);
