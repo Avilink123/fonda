@@ -632,8 +632,56 @@ Fournis une analyse fondamentale complète de cette devise.`;
     };
   }
 
-  // Parse AI generated report into structured data (Enhanced)
-  parseAIReport(aiResponse) {
+  // Clean text from markdown formatting
+  cleanText(text) {
+    if (!text) return "";
+    
+    return text
+      // Remove all markdown formatting
+      .replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold **text**
+      .replace(/\*([^*]+)\*/g, '$1')      // Remove italic *text*
+      .replace(/#{1,6}\s+/g, '')          // Remove headers
+      .replace(/^\s*[-•]\s+/gm, '• ')     // Clean bullet points
+      .replace(/^\s*\d+\.\s+/gm, '')      // Remove numbered lists
+      .replace(/\[([^\]]+)\]/g, '$1')     // Remove brackets
+      .replace(/\s{2,}/g, ' ')            // Multiple spaces to single
+      .replace(/\n{3,}/g, '\n\n')         // Multiple newlines to double
+      .trim();
+  }
+
+  // Extract clean sections from AI response
+  extractCleanSections(aiResponse) {
+    const sections = {};
+    
+    // Clean the entire response first
+    const cleanResponse = this.cleanText(aiResponse);
+    
+    // Define section patterns (looking for the cleaned text)
+    const patterns = {
+      overview: /APERÇU DU MARCHÉ:?\s*(.*?)(?=ANALYSE FONDAMENTALE|$)/is,
+      eurUsd: /EUR\/USD:?\s*(.*?)(?=GBP\/USD|$)/is,
+      gbpUsd: /GBP\/USD:?\s*(.*?)(?=USD\/JPY|$)/is,
+      usdJpy: /USD\/JPY:?\s*(.*?)(?=USD\/CHF|$)/is,
+      usdChf: /USD\/CHF:?\s*(.*?)(?=AUD\/USD|$)/is,
+      audUsd: /AUD\/USD:?\s*(.*?)(?=NZD\/USD|$)/is,
+      nzdUsd: /NZD\/USD:?\s*(.*?)(?=USD\/CAD|$)/is,
+      usdCad: /USD\/CAD:?\s*(.*?)(?=FACTEURS CLÉS|$)/is,
+      factors: /FACTEURS CLÉS À SURVEILLER:?\s*(.*?)(?=DÉCLENCHEURS|$)/is,
+      volatility: /DÉCLENCHEURS DE VOLATILITÉ:?\s*(.*?)(?=SENTIMENT|$)/is,
+      sentiment: /SENTIMENT DES TRADERS:?\s*(.*?)(?=PRÉVISIONS|$)/is,
+      forecast: /PRÉVISIONS SESSION:?\s*(.*?)$/is
+    };
+    
+    // Extract each section
+    Object.keys(patterns).forEach(key => {
+      const match = cleanResponse.match(patterns[key]);
+      if (match && match[1]) {
+        sections[key] = this.cleanText(match[1]).substring(0, 200).trim();
+      }
+    });
+    
+    return sections;
+  }
     try {
       // Extract sections using regex patterns for new structure
       const overviewMatch = aiResponse.match(/\*\*APERÇU DU MARCHÉ:\*\*(.*?)(?=\*\*ANALYSE FONDAMENTALE|$)/s);
