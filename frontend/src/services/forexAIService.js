@@ -299,27 +299,48 @@ Maximum 400 mots. Langage professionnel mais accessible à un lycéen.`;
     try {
       console.log(`🤖 Generating fresh analysis for ${currency}...`);
       
-      const prompt = `Tu es un analyste forex expert. Analyse la devise ${currency} aujourd'hui de manière professionnelle et accessible.
+      const prompt = `Act as a professional forex analyst. Conduct a comprehensive fundamental analysis of ${currency} currency.
 
-STRUCTURE REQUISE:
+Analyze current market sentiment and factors affecting ${currency}:
+- Central bank monetary policy and recent statements
+- Key economic indicators (inflation, employment, GDP, trade balance)
+- Political stability and government policies  
+- Market positioning and institutional flows
+- Risk sentiment impact on the currency
+- Correlations with commodities (if applicable)
+- Technical levels and market structure
 
-**Score Fondamental:** [nombre entre 1-100]
-**Score Technique:** [nombre entre 1-100]  
-**Sentiment:** [Description courte du sentiment actuel]
+Provide specific insights that matter to forex traders right now.
 
-**Facteurs Clés:**
-• [Facteur économique 1]
-• [Facteur économique 2] 
-• [Facteur économique 3]
-• [Facteur politique/monetary 4]
+Make sure your analysis is easy to understand by a high school student. The analysis must be in French.
 
-**Prévision:**
-[Paragraphe de 2-3 phrases expliquant les perspectives à court/moyen terme pour cette devise, en français simple mais professionnel]
+STRUCTURE REQUISE EN FRANÇAIS:
 
-**Recommandation:** [ACHAT/VENTE/NEUTRE]
-**Confiance:** [nombre entre 1-100]%
+**SITUATION ACTUELLE ${currency}:**
+[Vue d'ensemble de la devise aujourd'hui - 2 phrases]
 
-Sois précis, factuel, et accessible à un lycéen. Maximum 150 mots.`;
+**ANALYSE FONDAMENTALE:**
+
+**Politique Monétaire:** [Position de la banque centrale, taux, orientation future]
+**Économie:** [Données clés - inflation, emploi, croissance, principales tendances]  
+**Facteurs Politiques:** [Stabilité, élections, réformes, impact sur devise]
+**Sentiment de Marché:** [Positionnement institutionnel, flux de capitaux, risk-on/risk-off]
+
+**CATALYSEURS À SURVEILLER:**
+• [Événement/donnée à venir 1]
+• [Décision politique/monétaire 2]
+• [Facteur externe/corrélation 3]
+
+**ANALYSE TECHNIQUE:**
+[Niveaux clés, tendance, supports/résistances principales]
+
+**PRÉVISION ${currency}:**
+[Perspective court/moyen terme basée sur l'analyse fondamentale - 2-3 phrases]
+
+**SCORE FONDAMENTAL:** [1-100] **SCORE TECHNIQUE:** [1-100]
+**RECOMMANDATION:** [ACHAT/VENTE/NEUTRE] **CONFIANCE:** [1-100]%
+
+Maximum 300 mots. Langage professionnel mais accessible.`;
       
       const aiResponse = await this.callPerplexityAI(prompt);
       console.log(`✅ Fresh currency analysis generated for ${currency}`);
