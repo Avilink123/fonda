@@ -144,34 +144,68 @@ export const HeroSection = () => {
 // Daily Market Recap Component
 export const DailyMarketRecap = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [marketRecapData, setMarketRecapData] = useState(null);
+  const [loading, setLoading] = useState(true);
   
-  const marketRecapData = {
-    date: "8 Juin 2025",
-    summary: "Les marchés forex montrent une volatilité accrue suite aux dernières déclarations de la BCE concernant l'inflation dans la zone euro. L'EUR/USD maintient une tendance haussière modérée.",
-    keyPoints: [
-      {
-        title: "BCE maintient ses taux directeurs",
-        impact: "positif",
-        description: "La Banque Centrale Européenne a maintenu ses taux d'intérêt à 4.25%, conformément aux attentes du marché."
-      },
-      {
-        title: "Dollar américain sous pression",
-        impact: "négatif", 
-        description: "Le DXY recule de 0.3% face aux incertitudes sur la politique monétaire de la Fed."
-      },
-      {
-        title: "Livre sterling en hausse",
-        impact: "positif",
-        description: "GBP/USD gagne 0.45% grâce aux données d'inflation britanniques favorables."
-      }
-    ],
-    aiInsights: {
-      sentiment: "Optimiste modéré",
-      confidence: 78,
-      mainTrend: "Affaiblissement du Dollar US face aux devises européennes",
-      recommendation: "Surveiller les annonces Fed de mercredi pour confirmation de tendance"
+  useEffect(() => {
+    loadDailyRecap();
+  }, []);
+
+  const loadDailyRecap = async () => {
+    setLoading(true);
+    try {
+      console.log('🔄 Loading daily market recap...');
+      const data = await forexAIService.generateDailyRecap();
+      setMarketRecapData(data);
+      console.log('✅ Daily recap loaded:', data.source);
+    } catch (error) {
+      console.error('❌ Error loading daily recap:', error);
+      // Fallback to mock data
+      setMarketRecapData({
+        date: new Date().toLocaleDateString('fr-FR'),
+        summary: "Erreur lors du chargement de l'analyse IA. Veuillez réessayer.",
+        keyPoints: [],
+        aiInsights: {
+          sentiment: "Non disponible",
+          confidence: 0,
+          mainTrend: "Erreur de chargement",
+          recommendation: "Réessayer plus tard"
+        }
+      });
     }
+    setLoading(false);
   };
+
+  if (loading) {
+    return (
+      <section id="analyses" className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="loading-spinner mx-auto mb-4"></div>
+            <p className="text-slate-600">🤖 Génération de l'analyse IA en cours...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!marketRecapData) {
+    return (
+      <section id="analyses" className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-red-600">❌ Erreur lors du chargement de l'analyse</p>
+            <button 
+              onClick={loadDailyRecap}
+              className="mt-4 bg-amber-400 hover:bg-amber-500 text-slate-900 px-6 py-2 rounded-lg font-semibold"
+            >
+              Réessayer
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="analyses" className="py-20 bg-slate-50">
