@@ -369,91 +369,111 @@ export const CurrencyAnalysis = () => {
             ))}
           </div>
 
-          <div className="bg-white rounded-xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-4">
-                <div className="text-4xl">{selectedCurr.flag}</div>
+            <div className="bg-white rounded-xl p-6">
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="loading-spinner mx-auto mb-4"></div>
+                <p className="text-slate-600">🤖 Analyse IA en cours pour {selectedCurrency}...</p>
+              </div>
+            ) : (
+              <>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-4">
+                  <div className="text-4xl">{selectedCurr.flag}</div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-900">{selectedCurr.name} ({selectedCurrency})</h3>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg font-semibold text-slate-700">{selectedCurr.currentRate}</span>
+                      <span className={`text-sm font-medium ${
+                        selectedCurr.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {selectedCurr.trend === 'up' ? '↗' : '↘'} {selectedCurr.change}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-right">
+                  <div className={`text-lg font-bold px-4 py-2 rounded-lg ${
+                    analysisData?.aiRating === 'ACHAT' ? 'bg-green-100 text-green-800' :
+                    analysisData?.aiRating === 'VENTE' ? 'bg-red-100 text-red-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {analysisData?.aiRating || 'CHARGEMENT...'}
+                  </div>
+                  <div className="text-sm text-slate-600 mt-1">
+                    Confiance: {analysisData?.confidence || 0}%
+                  </div>
+                  {analysisData?.source && (
+                    <div className="text-xs text-blue-600 mt-1">
+                      📡 {analysisData.source}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900">{selectedCurr.name} ({selectedCurrency})</h3>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg font-semibold text-slate-700">{selectedCurr.currentRate}</span>
-                    <span className={`text-sm font-medium ${
-                      selectedCurr.trend === 'up' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {selectedCurr.trend === 'up' ? '↗' : '↘'} {selectedCurr.change}
-                    </span>
+                  <h4 className="text-lg font-semibold text-slate-900 mb-4">Scores d'Analyse</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-slate-700">Score Fondamental</span>
+                        <span className="text-sm font-bold text-slate-900">{analysisData?.fundamentalScore || 0}/100</span>
+                      </div>
+                      <div className="w-full bg-slate-200 rounded-full h-2">
+                        <div 
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-500" 
+                          style={{width: `${analysisData?.fundamentalScore || 0}%`}}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-slate-700">Score Technique</span>
+                        <span className="text-sm font-bold text-slate-900">{analysisData?.technicalScore || 0}/100</span>
+                      </div>
+                      <div className="w-full bg-slate-200 rounded-full h-2">
+                        <div 
+                          className="bg-amber-500 h-2 rounded-full transition-all duration-500" 
+                          style={{width: `${analysisData?.technicalScore || 0}%`}}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4">
+                      <span className="text-sm font-medium text-slate-700">Sentiment IA:</span>
+                      <span className="ml-2 text-sm font-semibold text-slate-900">{analysisData?.sentiment || 'Chargement...'}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="text-right">
-                <div className={`text-lg font-bold px-4 py-2 rounded-lg ${
-                  selectedCurr.analysis.aiRating === 'ACHAT' ? 'bg-green-100 text-green-800' :
-                  selectedCurr.analysis.aiRating === 'VENTE' ? 'bg-red-100 text-red-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {selectedCurr.analysis.aiRating}
-                </div>
-                <div className="text-sm text-slate-600 mt-1">
-                  Confiance: {selectedCurr.analysis.confidence}%
-                </div>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div>
-                <h4 className="text-lg font-semibold text-slate-900 mb-4">Scores d'Analyse</h4>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-slate-700">Score Fondamental</span>
-                      <span className="text-sm font-bold text-slate-900">{selectedCurr.analysis.fundamentalScore}/100</span>
-                    </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-500" 
-                        style={{width: `${selectedCurr.analysis.fundamentalScore}%`}}
-                      ></div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-slate-700">Score Technique</span>
-                      <span className="text-sm font-bold text-slate-900">{selectedCurr.analysis.technicalScore}/100</span>
-                    </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2">
-                      <div 
-                        className="bg-amber-500 h-2 rounded-full transition-all duration-500" 
-                        style={{width: `${selectedCurr.analysis.technicalScore}%`}}
-                      ></div>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <span className="text-sm font-medium text-slate-700">Sentiment IA:</span>
-                    <span className="ml-2 text-sm font-semibold text-slate-900">{selectedCurr.analysis.sentiment}</span>
+                <div>
+                  <h4 className="text-lg font-semibold text-slate-900 mb-4">Facteurs Clés</h4>
+                  <div className="space-y-3">
+                    {analysisData?.keyFactors ? (
+                      analysisData.keyFactors.map((factor, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                          <span className="text-sm text-slate-700">{factor}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500 italic">Chargement des facteurs...</div>
+                    )}
                   </div>
                 </div>
               </div>
 
-              <div>
-                <h4 className="text-lg font-semibold text-slate-900 mb-4">Facteurs Clés</h4>
-                <div className="space-y-3">
-                  {selectedCurr.analysis.keyFactors.map((factor, index) => (
-                    <div key={index} className="flex items-start space-x-3">
-                      <div className="flex-shrink-0 w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
-                      <span className="text-sm text-slate-700">{factor}</span>
-                    </div>
-                  ))}
-                </div>
+              <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+                <h4 className="text-lg font-semibold text-slate-900 mb-3">Prévision IA</h4>
+                <p className="text-slate-700 leading-relaxed">
+                  {analysisData?.forecast || 'Génération de la prévision IA en cours...'}
+                </p>
               </div>
-            </div>
-
-            <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
-              <h4 className="text-lg font-semibold text-slate-900 mb-3">Prévision IA</h4>
-              <p className="text-slate-700 leading-relaxed">{selectedCurr.analysis.forecast}</p>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </div>
