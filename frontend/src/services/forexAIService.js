@@ -665,81 +665,85 @@ Fournis une analyse fondamentale complète de cette devise.`;
     
     return sections;
   }
-  // Parse AI generated report into structured data (Enhanced & Professional)
+  // Parse AI generated report into structured data (Simplified & Clean)
   parseAIReport(aiResponse) {
     try {
-      // Use the clean extraction method
-      const sections = this.extractCleanSections(aiResponse);
+      // Clean the response completely
+      const cleanResponse = this.cleanText(aiResponse);
       
-      // Build professional key points from currency analyses
+      // Split into paragraphs
+      const paragraphs = cleanResponse.split('\n\n').filter(p => p.trim() && p.length > 10);
+      
+      // Extract summary (first meaningful paragraph)
+      let summary = paragraphs.find(p => p.length > 50) || cleanResponse.substring(0, 300);
+      
+      // Create clean key points from paragraphs
       const keyPoints = [];
       
-      // Add major currency pair insights
-      if (sections.eurUsd) {
-        keyPoints.push({
-          title: "EUR/USD",
-          impact: this.determinePairImpact(sections.eurUsd),
-          description: sections.eurUsd
-        });
-      }
+      // Look for currency pairs in paragraphs
+      paragraphs.forEach(paragraph => {
+        const p = paragraph.trim();
+        if (p.includes('EUR') && p.includes('USD') && p.length > 30) {
+          keyPoints.push({
+            title: "EUR/USD",
+            impact: this.determinePairImpact(p),
+            description: p.substring(0, 150) + (p.length > 150 ? "..." : "")
+          });
+        } else if (p.includes('GBP') && p.includes('USD') && p.length > 30) {
+          keyPoints.push({
+            title: "GBP/USD", 
+            impact: this.determinePairImpact(p),
+            description: p.substring(0, 150) + (p.length > 150 ? "..." : "")
+          });
+        } else if (p.includes('USD') && p.includes('JPY') && p.length > 30) {
+          keyPoints.push({
+            title: "USD/JPY",
+            impact: this.determinePairImpact(p),
+            description: p.substring(0, 150) + (p.length > 150 ? "..." : "")
+          });
+        }
+      });
       
-      if (sections.gbpUsd) {
-        keyPoints.push({
-          title: "GBP/USD", 
-          impact: this.determinePairImpact(sections.gbpUsd),
-          description: sections.gbpUsd
-        });
-      }
-      
-      if (sections.usdJpy) {
-        keyPoints.push({
-          title: "USD/JPY",
-          impact: this.determinePairImpact(sections.usdJpy),
-          description: sections.usdJpy
-        });
-      }
-      
-      // If no pair analyses, extract factors as key points
-      if (keyPoints.length === 0 && sections.factors) {
-        const factorsList = sections.factors.split('•').filter(f => f.trim());
-        factorsList.forEach((factor, index) => {
-          if (factor.trim() && index < 3) {
+      // If no currency pairs found, create general key points
+      if (keyPoints.length === 0) {
+        paragraphs.slice(1, 4).forEach((paragraph, index) => {
+          if (paragraph.trim().length > 20) {
             keyPoints.push({
-              title: "Facteur clé",
+              title: `Point d'analyse ${index + 1}`,
               impact: "important",
-              description: factor.trim()
+              description: paragraph.trim().substring(0, 150) + (paragraph.length > 150 ? "..." : "")
             });
           }
         });
       }
       
-      // Default professional key points if none found
-      if (keyPoints.length === 0) {
-        keyPoints.push(
-          { title: "Analyse fondamentale", impact: "positif", description: "Rapport professionnel généré avec analyse complète des facteurs macroéconomiques" },
-          { title: "Surveillance des banques centrales", impact: "neutre", description: "Évaluation des politiques monétaires et de leur impact sur les devises" },
-          { title: "Sentiment institutionnel", impact: "important", description: "Analyse du positionnement des traders professionnels et des flux de capitaux" }
-        );
+      // Extract sentiment and trends from text
+      const fullText = cleanResponse.toLowerCase();
+      let sentiment = "Surveillance active";
+      if (fullText.includes('optimiste') || fullText.includes('positif') || fullText.includes('hausse')) {
+        sentiment = "Optimiste modéré";
+      } else if (fullText.includes('pessimiste') || fullText.includes('négatif') || fullText.includes('baisse')) {
+        sentiment = "Prudence recommandée";
       }
       
       return {
-        summary: sections.overview || this.cleanText(aiResponse).substring(0, 300) + "...",
-        keyPoints: keyPoints.slice(0, 3), // Limit to 3 for clean display
-        sentiment: sections.sentiment || "Analyse professionnelle en cours",
-        mainTrend: sections.volatility || "Surveillance des déclencheurs de volatilité",
-        recommendations: sections.forecast || "Voir analyse détaillée pour recommandations spécifiques"
+        summary: summary.substring(0, 400) + (summary.length > 400 ? "..." : ""),
+        keyPoints: keyPoints.slice(0, 3),
+        sentiment: sentiment,
+        mainTrend: "Analyse fondamentale en cours",
+        recommendations: "Consulter l'analyse détaillée pour recommandations spécifiques"
       };
       
     } catch (error) {
-      console.error('❌ Error parsing enhanced AI report:', error);
+      console.error('❌ Error parsing simplified AI report:', error);
       return {
-        summary: this.cleanText(aiResponse),
+        summary: this.cleanText(aiResponse).substring(0, 400),
         keyPoints: [
-          { title: "Rapport professionnel", impact: "neutre", description: "Analyse fondamentale complète disponible" }
+          { title: "Analyse professionnelle", impact: "neutre", description: "Rapport d'analyse fondamentale généré par IA" }
         ],
-        sentiment: "Analyse générée par IA",
-        mainTrend: "Recherche fondamentale approfondie",
-        recommendations: "Consulter le rapport détaillé"
+        sentiment: "Analyse en cours",
+        mainTrend: "Données en cours de traitement",
+        recommendations: "Voir rapport détaillé"
       };
     }
   }
