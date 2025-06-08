@@ -180,37 +180,29 @@ class ForexAIService {
       
       let prompt = `Tu es un analyste forex français réputé. Rédige un rapport de marché professionnel pour ${generationCheck.session}.
 
-RÈGLES ABSOLUES:
-- Texte pur uniquement, AUCUN formatage (pas de **, pas de •, pas de :, pas de chiffres à la fin)
-- Phrases complètes et fluides
-- Structure claire avec paragraphes séparés
-- Langage accessible à un lycéen mais professionnel
+INSTRUCTIONS STRICTES:
+- Français naturel uniquement, aucun formatage technique
+- Pas de mots comme "PARAGRAPHE", "TITRE", etc. dans le texte
+- Sépare tes idées par des paragraphes courts
+- Texte fluide et lisible
 
 ${sessionContext}
 
-Rédige exactement ceci:
+Écris ton rapport ainsi:
 
-TITRE: Rapport ${generationCheck.session}
+Premier paragraphe: Vue d'ensemble de la situation forex aujourd'hui.
 
-PARAGRAPHE 1 - Vue d'ensemble:
-[2-3 phrases sur la situation générale des marchés forex aujourd'hui]
+Deuxième paragraphe: Analyse d'EUR/USD avec les facteurs européens et américains.
 
-PARAGRAPHE 2 - EUR/USD:
-[Analyse complète en 2 phrases: facteurs BCE, économie européenne, sentiment USD]
+Troisième paragraphe: Analyse de GBP/USD avec les éléments britanniques.
 
-PARAGRAPHE 3 - GBP/USD:
-[Analyse complète en 2 phrases: facteurs BoE, données UK, Brexit]
+Quatrième paragraphe: Analyse d'USD/JPY avec la politique japonaise.
 
-PARAGRAPHE 4 - USD/JPY:
-[Analyse complète en 2 phrases: politique BoJ, intervention, yen carry trade]
+Cinquième paragraphe: Trois facteurs de risque importants à surveiller.
 
-PARAGRAPHE 5 - Facteurs de risque:
-[3 éléments à surveiller cette session, expliqués simplement]
+Dernier paragraphe: Tes recommandations pour les traders aujourd'hui.
 
-PARAGRAPHE 6 - Recommandations:
-[2 conseils concrets pour les traders aujourd'hui]
-
-Maximum 300 mots. Français naturel, pas de jargon technique.`;
+Maximum 350 mots. Style professionnel mais accessible.`;
       
       if (Object.keys(economicData).length > 0) {
         prompt += `\n\nDonnées économiques à mentionner naturellement dans ton analyse:`;
