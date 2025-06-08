@@ -235,14 +235,19 @@ export const DailyMarketRecap = () => {
                       </span>
                     )}
                   </h3>
-                  <div className="flex items-center space-x-4 text-sm text-slate-500">
-                    <span>Dernière mise à jour: {new Date(marketRecapData.timestamp).toLocaleTimeString('fr-FR')}</span>
-                    {marketRecapData.nextGeneration && (
-                      <span className="text-blue-600">
-                        ⏰ Prochain rapport: {marketRecapData.nextGeneration}
-                      </span>
-                    )}
-                  </div>
+              <div className="flex items-center space-x-4 text-sm text-slate-500">
+                <span>Mise à jour: {new Date(marketRecapData.timestamp).toLocaleTimeString('fr-FR')}</span>
+                {marketRecapData.nextGeneration && (
+                  <span className="text-blue-600 font-medium">
+                    🕐 Prochain rapport: {marketRecapData.nextGeneration}
+                  </span>
+                )}
+                {marketRecapData.isScheduled && (
+                  <span className="text-green-600 text-xs bg-green-50 px-2 py-1 rounded-full">
+                    Programmé
+                  </span>
+                )}
+              </div>
                 </div>
               </div>
               <div className="text-right">
