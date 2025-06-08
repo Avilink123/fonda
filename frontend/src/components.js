@@ -246,6 +246,20 @@ export const DailyMarketRecap = () => {
                 <h4 className="text-lg font-semibold text-slate-900 mb-3">Résumé Exécutif IA</h4>
                 <p className="text-slate-700 leading-relaxed">{marketRecapData.summary}</p>
                 
+                {/* Show raw AI report if available */}
+                {marketRecapData.rawReport && (
+                  <details className="mt-4">
+                    <summary className="text-sm text-blue-600 cursor-pointer hover:text-blue-800">
+                      📄 Voir le rapport IA complet
+                    </summary>
+                    <div className="mt-3 p-4 bg-white rounded-lg border border-blue-200">
+                      <div className="text-sm text-slate-700 whitespace-pre-line">
+                        {marketRecapData.rawReport}
+                      </div>
+                    </div>
+                  </details>
+                )}
+                
                 {marketRecapData.economicData && Object.keys(marketRecapData.economicData).length > 0 && (
                   <div className="mt-4 p-4 bg-white rounded-lg">
                     <h5 className="text-sm font-semibold text-slate-800 mb-2">📊 Données Économiques FRED (Officielles)</h5>
