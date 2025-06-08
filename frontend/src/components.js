@@ -221,26 +221,37 @@ export const DailyMarketRecap = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="bg-amber-100 p-3 rounded-full">
-                <NewspaperIcon className="h-6 w-6 text-amber-600" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="bg-amber-100 p-3 rounded-full">
+                  <NewspaperIcon className="h-6 w-6 text-amber-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-900">
+                    Rapport IA du {marketRecapData.date}
+                    {marketRecapData.session && (
+                      <span className="ml-2 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                        {marketRecapData.session}
+                      </span>
+                    )}
+                  </h3>
+                  <div className="flex items-center space-x-4 text-sm text-slate-500">
+                    <span>Dernière mise à jour: {new Date(marketRecapData.timestamp).toLocaleTimeString('fr-FR')}</span>
+                    {marketRecapData.nextGeneration && (
+                      <span className="text-blue-600">
+                        ⏰ Prochain rapport: {marketRecapData.nextGeneration}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold text-slate-900">Rapport IA du {marketRecapData.date}</h3>
-                <p className="text-sm text-slate-500">Dernière mise à jour: {new Date().toLocaleTimeString('fr-FR')}</p>
+              <div className="text-right">
+                <div className="text-sm text-slate-600">Statut:</div>
+                <div className="text-xs text-green-600 font-semibold">
+                  {marketRecapData.source?.includes('Programmé') ? '🟢 Rapport Programmé' : '🔵 Données Temps Réel'}
+                </div>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-slate-600">Date:</span>
-              <input 
-                type="date" 
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-1 text-sm"
-              />
-            </div>
-          </div>
 
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
                 <h4 className="text-lg font-semibold text-slate-900 mb-3">Résumé Exécutif IA</h4>
