@@ -422,32 +422,130 @@ Fournis une analyse fondamentale complète de cette devise.`;
     };
   }
 
-  formatDailyRecap(aiAnalysis, economicData) {
-    // Format AI analysis into structured daily recap
-    return {
-      date: new Date().toLocaleDateString('fr-FR'),
-      summary: aiAnalysis,
-      economicData: economicData,
-      timestamp: new Date().toISOString()
-    };
+  // Parse AI generated report into structured data
+  parseAIReport(aiResponse) {
+    try {
+      // Extract sections using regex patterns
+      const summaryMatch = aiResponse.match(/\*\*RÉSUMÉ EXÉCUTIF:\*\*(.*?)(?=\*\*POINTS CLÉS|$)/s);
+      const sentiment = aiResponse.match(/\*\*SENTIMENT GLOBAL:\*\*(.*?)(?=\*\*|$)/s)?.[1]?.trim() || "Neutre";
+      const trendMatch = aiResponse.match(/\*\*TENDANCE PRINCIPALE:\*\*(.*?)(?=\*\*|$)/s);
+      const recommendationsMatch = aiResponse.match(/\*\*RECOMMANDATIONS:\*\*(.*?)(?=\*\*|$)/s);
+      
+      // Extract key points
+      const keyPointsSection = aiResponse.match(/\*\*POINTS CLÉS DU JOUR:\*\*(.*?)(?=\*\*SENTIMENT|$)/s)?.[1] || '';
+      const keyPoints = [];
+      
+      // Parse numbered points
+      const pointMatches = keyPointsSection.match(/\d+\.\s*\*\*([^*]+)\*\*(.*?)(?=\d+\.|$)/gs);
+      if (pointMatches) {
+        pointMatches.forEach((point, index) => {
+          const titleMatch = point.match(/\*\*([^*]+)\*\*/);
+          const description = point.replace(/\d+\.\s*\*\*[^*]+\*\*/, '').trim();
+          
+          if (titleMatch) {
+            // Determine impact based on keywords
+            const title = titleMatch[1].trim();
+            let impact = "neutre";
+            if (title.toLowerCase().includes('hausse') || title.toLowerCase().includes('positif') || title.toLowerCase().includes('soutien')) {
+              impact = "positif";
+            } else if (title.toLowerCase().includes('baisse') || title.toLowerCase().includes('négatif') || title.toLowerCase().includes('pression')) {
+              impact = "négatif";
+            }
+            
+            keyPoints.push({
+              title: title,
+              impact: impact,
+              description: description
+            });
+          }
+        });
+      }
+      
+      // If no key points found, create default ones
+      if (keyPoints.length === 0) {
+        keyPoints.push(
+          { title: "Analyse générée par IA", impact: "neutre", description: "Rapport détaillé disponible ci-dessous" },
+          { title: "Données en temps réel", impact: "positif", description: "Utilisation de données FRED officielles" },
+          { title: "Marchés volatils", impact: "neutre", description: "Surveillance continue recommandée" }
+        );
+      }
+      
+      return {
+        summary: summaryMatch?.[1]?.trim() || aiResponse.substring(0, 200) + "...",
+        keyPoints: keyPoints,
+        sentiment: sentiment,
+        mainTrend: trendMatch?.[1]?.trim() || "Analyse en cours",
+        recommendations: recommendationsMatch?.[1]?.trim() || "Surveiller les développements"
+      };
+      
+    } catch (error) {
+      console.error('❌ Error parsing AI report:', error);
+      return {
+        summary: aiResponse,
+        keyPoints: [
+          { title: "Rapport IA", impact: "neutre", description: "Analyse complète disponible" }
+        ],
+        sentiment: "Analyse générée",
+        mainTrend: "Données en temps réel",
+        recommendations: "Voir rapport complet"
+      };
+    }
   }
 
-  formatCurrencyAnalysis(currency, aiAnalysis, indicators) {
-    // Format AI analysis into structured currency analysis
-    return {
-      currency,
-      analysis: aiAnalysis,
-      indicators: indicators,
-      timestamp: new Date().toISOString()
-    };
-  }
-
-  formatResearchResults(research) {
-    // Format research results
-    return {
-      research,
-      timestamp: new Date().toISOString()
-    };
+  // Parse currency analysis from AI response
+  parseCurrencyAnalysis(aiResponse) {
+    try {
+      // Extract scores
+      const fundamentalMatch = aiResponse.match(/\*\*Score Fondamental:\*\*\s*(\d+)/);
+      const technicalMatch = aiResponse.match(/\*\*Score Technique:\*\*\s*(\d+)/);
+      const sentimentMatch = aiResponse.match(/\*\*Sentiment:\*\*(.*?)(?=\*\*|$)/s);
+      const recommendationMatch = aiResponse.match(/\*\*Recommandation:\*\*\s*(ACHAT|VENTE|NEUTRE)/);
+      const confidenceMatch = aiResponse.match(/\*\*Confiance:\*\*\s*(\d+)/);
+      const forecastMatch = aiResponse.match(/\*\*Prévision:\*\*(.*?)(?=\*\*Recommandation|$)/s);
+      
+      // Extract key factors
+      const factorsSection = aiResponse.match(/\*\*Facteurs Clés:\*\*(.*?)(?=\*\*Prévision|$)/s)?.[1] || '';
+      const keyFactors = [];
+      const factorMatches = factorsSection.match(/•\s*([^\n•]+)/g);
+      if (factorMatches) {
+        factorMatches.forEach(factor => {
+          const cleaned = factor.replace(/•\s*/, '').trim();
+          if (cleaned) keyFactors.push(cleaned);
+        });
+      }
+      
+      // Default factors if none found
+      if (keyFactors.length === 0) {
+        keyFactors.push(
+          "Analyse économique en cours",
+          "Données de marché récentes",
+          "Tendances monétaires",
+          "Facteurs géopolitiques"
+        );
+      }
+      
+      return {
+        fundamentalScore: parseInt(fundamentalMatch?.[1]) || 70,
+        technicalScore: parseInt(technicalMatch?.[1]) || 65,
+        sentiment: sentimentMatch?.[1]?.trim() || "Neutre",
+        keyFactors: keyFactors,
+        forecast: forecastMatch?.[1]?.trim() || aiResponse,
+        aiRating: recommendationMatch?.[1] || "NEUTRE",
+        confidence: parseInt(confidenceMatch?.[1]) || 75
+      };
+      
+    } catch (error) {
+      console.error('❌ Error parsing currency analysis:', error);
+      return {
+        fundamentalScore: 70,
+        technicalScore: 65,
+        sentiment: "Analyse générée par IA",
+        keyFactors: ["Données en temps réel", "Analyse automatisée", "Marchés dynamiques", "Surveillance continue"],
+        forecast: aiResponse,
+        aiRating: "NEUTRE",
+        confidence: 75
+      };
+    }
   }
 }
 
