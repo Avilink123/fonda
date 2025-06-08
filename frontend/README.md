@@ -1,49 +1,110 @@
-# Getting Started with Create React App
+# ForexAI - Plateforme d'Analyse Fondamentale Forex par IA
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚀 Vue d'ensemble
 
-## Available Scripts
+ForexAI est une plateforme révolutionnaire d'analyse fondamentale forex entièrement automatisée par intelligence artificielle. Elle combine Perplexity AI pour l'analyse profonde et FRED pour les données économiques en temps réel.
 
-In the project directory, you can run:
+## 🎯 Fonctionnalités Principales
 
-### `npm start`
+### ✅ Déjà Implémentées
+- ✅ Interface française moderne et épurée
+- ✅ Analyse des 7 devises majeures (EUR, USD, GBP, JPY, CHF, CAD, AUD)
+- ✅ Tableau de bord responsive
+- ✅ Calendrier économique intelligent
+- ✅ Rapports quotidiens automatisés (interface)
+- ✅ Design professionnel pour traders forex
+- ✅ Structure prête pour intégrations API
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🔄 En Attente d'API Keys
+- 🔄 Daily Market Recap automatique par Perplexity AI
+- 🔄 Currency Analysis fondamentale en temps réel
+- 🔄 Deep Research automatisé
+- 🔄 Données économiques FRED en temps réel
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🔑 Configuration des API Keys
 
-### `npm test`
+### APIs Requises
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### 1. Perplexity AI (Analyse IA)
+- **URL**: https://www.perplexity.ai/settings/api
+- **Coût**: ~$0.50-$2 par million de tokens
+- **Usage**: Analyse fondamentale automatisée, rapports quotidiens
 
-### `npm run build`
+#### 2. FRED Economic Data (Données Économiques)
+- **URL**: https://fred.stlouisfed.org/docs/api/api_key.html
+- **Coût**: Gratuit
+- **Usage**: Indicateurs économiques US, EU, UK, JP, CA, AU
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation des API Keys
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Obtenez vos clés API des services ci-dessus
+2. Créez un fichier `.env.local` dans `/app/frontend/`:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+# API Keys for ForexAI
+REACT_APP_PERPLEXITY_API_KEY=your_perplexity_key_here
+REACT_APP_FRED_API_KEY=your_fred_key_here
+```
 
-### `npm run eject`
+3. Redémarrez l'application:
+```bash
+cd /app && sudo supervisorctl restart frontend
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🏗️ Architecture Technique
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Structure des Fichiers
+```
+/app/frontend/src/
+├── components.js          # Tous les composants React
+├── App.js                # Application principale  
+├── App.css              # Styles CSS personnalisés
+└── services/
+    ├── apiConfig.js     # Configuration des APIs
+    └── forexAIService.js # Service d'intégration IA
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🤖 Intégration IA
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Perplexity AI
+- **Modèle**: `llama-3.1-sonar-small-128k-online`
+- **Température**: 0.2 (analyse factuelle)
+- **Tokens Max**: 4000
+- **Prompts spécialisés** pour l'analyse forex
 
-## Learn More
+### FRED Economic Data
+- **Indicateurs surveillés**:
+  - Taux d'intérêt (Fed, BCE, BoE, BoJ, BoC, RBA)
+  - Inflation (CPI pour toutes les zones)
+  - PIB, Emploi, Ventes au détail
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🎨 Design & UX
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Palette de Couleurs
+- **Primaire**: Bleu marine (#1e3a8a)
+- **Accent**: Doré (#f59e0b)
+- **Arrière-plan**: Slate (#0f172a)
+
+## 🚀 Scripts Disponibles
+
+### `yarn start`
+Lance l'application en mode développement sur [http://localhost:3000](http://localhost:3000)
+
+### `yarn build`
+Compile l'application pour la production
+
+### `yarn test`
+Lance les tests
+
+## 📊 Données Mockées
+
+En l'absence d'API keys, la plateforme utilise des données mockées réalistes pour toutes les fonctionnalités.
+
+## 🔧 Support Technique
+
+Pour l'intégration des APIs, consultez:
+- `/src/services/apiConfig.js` - Configuration
+- `/src/services/forexAIService.js` - Service principal
 
 ### Code Splitting
 
