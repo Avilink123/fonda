@@ -445,8 +445,11 @@ export const CurrencyAnalysis = () => {
                     Confiance: {analysisData?.confidence || 0}%
                   </div>
                   {analysisData?.source && (
-                    <div className="text-xs text-blue-600 mt-1">
-                      📡 {analysisData.source}
+                    <div className="text-xs text-blue-600 mt-1 flex items-center space-x-2">
+                      <span>📡 {analysisData.source}</span>
+                      {analysisData.source.includes('Optimisé') && (
+                        <span className="text-green-600">💾 Cache 4h</span>
+                      )}
                     </div>
                   )}
                 </div>
