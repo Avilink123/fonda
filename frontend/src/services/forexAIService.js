@@ -253,15 +253,36 @@ Maximum 250 mots total.`;
     }
   }
 
-  // Generate Currency Analysis using AI + Economic Data
+  // Generate Currency Analysis using AI (Optimized with Cache)
   async generateCurrencyAnalysis(currency) {
     if (!this.isReady()) {
       console.log('⚠️ Perplexity API not ready, using mock data for', currency);
       return this.getMockCurrencyAnalysis(currency);
     }
 
+    // Check cache first
+    const cacheKey = `forexai_currency_${currency}`;
+    const cached = localStorage.getItem(cacheKey);
+    
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        const cacheTime = new Date(data.timestamp);
+        const now = new Date();
+        const hoursSinceCache = (now - cacheTime) / (1000 * 60 * 60);
+        
+        // Use cache if less than 4 hours old
+        if (hoursSinceCache < 4) {
+          console.log(`📋 Using cached analysis for ${currency} (${hoursSinceCache.toFixed(1)}h old)`);
+          return data;
+        }
+      } catch (error) {
+        console.error('Error parsing cached currency data:', error);
+      }
+    }
+
     try {
-      console.log(`🤖 Generating real-time analysis for ${currency}...`);
+      console.log(`🤖 Generating fresh analysis for ${currency}...`);
       
       const prompt = `Tu es un analyste forex expert. Analyse la devise ${currency} aujourd'hui de manière professionnelle et accessible.
 
@@ -286,17 +307,23 @@ STRUCTURE REQUISE:
 Sois précis, factuel, et accessible à un lycéen. Maximum 150 mots.`;
       
       const aiResponse = await this.callPerplexityAI(prompt);
-      console.log(`✅ Currency analysis generated for ${currency}`);
+      console.log(`✅ Fresh currency analysis generated for ${currency}`);
       
       // Parse the structured response
       const parsedAnalysis = this.parseCurrencyAnalysis(aiResponse);
       
-      return {
+      const analysisData = {
         ...parsedAnalysis,
         timestamp: new Date().toISOString(),
-        source: 'Perplexity AI',
+        source: 'Perplexity AI (Optimisé)',
         rawAnalysis: aiResponse
       };
+      
+      // Cache for 4 hours
+      localStorage.setItem(cacheKey, JSON.stringify(analysisData));
+      console.log(`💾 Analysis cached for ${currency} (4h validity)`);
+      
+      return analysisData;
       
     } catch (error) {
       console.error(`❌ Error analyzing ${currency}:`, error);
