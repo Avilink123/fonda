@@ -115,21 +115,66 @@ class ForexAIService {
     return this.fredApiKey && this.fredApiKey !== 'placeholder_for_fred_key';
   }
 
-  // Generate Daily Market Recap using Perplexity AI + FRED Data
+  // Check if service is ready
+  isReady() {
+    return this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key';
+  }
+
+  // Generate Daily Market Recap using Perplexity AI + FRED Data (Scheduled)
   async generateDailyRecap() {
     if (!this.isReady()) {
       console.log('⚠️ Perplexity API not ready, using mock data');
       return this.getMockDailyRecap();
     }
 
+    // Check if we need to generate a new report
+    const reportInfo = this.getLastReportInfo();
+    
+    if (!reportInfo.needsGeneration && reportInfo.lastReport) {
+      console.log('📋 Using cached report from:', new Date(reportInfo.lastReport.timestamp).toLocaleString());
+      return reportInfo.lastReport;
+    }
+
+    // Check if we're in a generation window
+    const generationCheck = this.shouldGenerateNewReport();
+    if (!generationCheck.should) {
+      console.log('⏰ Not in generation window. Next report:', this.getNextReportTime());
+      
+      // Return last report or mock data with next generation time
+      if (reportInfo.lastReport) {
+        reportInfo.lastReport.nextGeneration = this.getNextReportTime();
+        return reportInfo.lastReport;
+      } else {
+        const mockData = this.getMockDailyRecap();
+        mockData.summary = `Prochain rapport IA programmé à ${this.getNextReportTime()}. Données de démonstration affichées.`;
+        mockData.nextGeneration = this.getNextReportTime();
+        return mockData;
+      }
+    }
+
     try {
-      console.log('🤖 Generating real-time daily market recap with economic data...');
+      console.log(`🤖 Generating scheduled report for: ${generationCheck.session}...`);
       
       // Get latest economic data from FRED if available
       const economicData = await this.getLatestEconomicData();
       
-      // Build enhanced prompt for professional report
-      let prompt = `Tu es un analyste forex senior. Rédige un rapport quotidien professionnel sur le marché forex pour le ${new Date().toLocaleDateString('fr-FR')}.`;
+      // Build enhanced prompt based on session
+      let sessionContext = "";
+      const currentTimeSlot = this.getCurrentTimeSlot();
+      
+      switch(currentTimeSlot) {
+        case 0: // 7:00 AM - European Session
+          sessionContext = "Prépare les traders pour l'ouverture de la session européenne. Focus sur EUR, GBP, CHF.";
+          break;
+        case 1: // 12:00 PM - American Session  
+          sessionContext = "Prépare les traders pour l'ouverture de la session américaine. Focus sur USD et impact sur toutes les paires.";
+          break;
+        case 2: // 5:00 PM - End of Day Recap
+          sessionContext = "Récapitulatif de fin de journée. Résume les mouvements de la journée et prépare pour la session asiatique.";
+          break;
+      }
+      
+      let prompt = `Tu es un analyste forex senior. Rédige un rapport ${generationCheck.session} pour le ${new Date().toLocaleDateString('fr-FR')}. ${sessionContext}`;
       
       if (Object.keys(economicData).length > 0) {
         prompt += `\n\nDonnées économiques récentes FRED:`;
@@ -144,57 +189,66 @@ class ForexAIService {
 STRUCTURE REQUISE:
 
 **RÉSUMÉ EXÉCUTIF:**
-[2-3 phrases sur la situation générale des marchés forex aujourd'hui]
+[2-3 phrases sur la situation pour cette session de trading]
 
-**POINTS CLÉS DU JOUR:**
+**POINTS CLÉS DE LA SESSION:**
 
 1. **[Titre impact positif]**
-   Description claire de l'événement et son impact sur les devises.
+   Description claire et impact sur devises concernées.
 
 2. **[Titre impact négatif]** 
-   Description claire de l'événement et son impact sur les devises.
+   Description claire et impact sur devises concernées.
 
-3. **[Titre impact neutre/important]**
-   Description claire de l'événement et son impact sur les devises.
+3. **[Titre impact important]**
+   Description claire et impact sur devises concernées.
 
-**SENTIMENT GLOBAL:** [Optimiste/Pessimiste/Neutre modéré]
+**SENTIMENT GLOBAL:** [Optimiste/Pessimiste/Neutre pour cette session]
 
-**TENDANCE PRINCIPALE:** [Description en 1 phrase]
+**TENDANCE PRINCIPALE:** [Tendance attendue pour cette session]
 
 **RECOMMANDATIONS:**
-- [Conseil 1 pour traders]
-- [Conseil 2 pour traders]
+- [Conseil 1 spécifique à cette session]
+- [Conseil 2 spécifique à cette session]
 
-Concentre-toi sur: EUR/USD, GBP/USD, USD/JPY, USD/CHF, AUD/USD, USD/CAD.
-Écris un français professionnel mais accessible à un lycéen.
-Maximum 300 mots total.`;
+Concentre-toi sur les paires actives pendant cette session.
+Écris un français professionnel mais accessible.
+Maximum 250 mots total.`;
       
       const aiResponse = await this.callPerplexityAI(prompt);
-      console.log('✅ Daily recap generated by AI with FRED data');
+      console.log(`✅ Scheduled report generated for ${generationCheck.session}`);
       
       // Parse the structured response
       const parsedReport = this.parseAIReport(aiResponse);
       
-      return {
+      const reportData = {
         date: new Date().toLocaleDateString('fr-FR'),
+        session: generationCheck.session,
         summary: parsedReport.summary,
         keyPoints: parsedReport.keyPoints,
         aiInsights: {
           sentiment: parsedReport.sentiment,
-          confidence: 88,
+          confidence: 90,
           mainTrend: parsedReport.mainTrend,
           recommendation: parsedReport.recommendations
         },
         economicData: economicData,
         timestamp: new Date().toISOString(),
-        source: 'Perplexity AI + FRED Data',
-        rawReport: aiResponse
+        source: 'Perplexity AI + FRED Data (Programmé)',
+        rawReport: aiResponse,
+        nextGeneration: this.getNextReportTime()
       };
       
+      // Cache the report
+      localStorage.setItem('forexai_daily_report', JSON.stringify(reportData));
+      console.log('💾 Report cached successfully');
+      
+      return reportData;
+      
     } catch (error) {
-      console.error('❌ Error generating daily recap:', error);
+      console.error('❌ Error generating scheduled recap:', error);
       const mockData = this.getMockDailyRecap();
-      mockData.summary = "Erreur lors de la génération de l'analyse IA. Données de démonstration affichées.";
+      mockData.summary = "Erreur lors de la génération du rapport programmé. Données de démonstration affichées.";
+      mockData.nextGeneration = this.getNextReportTime();
       return mockData;
     }
   }
