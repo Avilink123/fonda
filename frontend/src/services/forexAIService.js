@@ -3,22 +3,23 @@ import { API_CONFIG, apiHelpers } from './apiConfig';
 
 class ForexAIService {
   constructor() {
-    this.perplexityApiKey = null;
-    this.fredApiKey = null;
-    this.isInitialized = false;
-  }
-
-  // Initialize service with API keys
-  initialize(perplexityKey, fredKey) {
-    this.perplexityApiKey = perplexityKey;
-    this.fredApiKey = fredKey;
+    this.perplexityApiKey = process.env.REACT_APP_PERPLEXITY_API_KEY;
+    this.fredApiKey = process.env.REACT_APP_FRED_API_KEY;
     this.isInitialized = true;
-    console.log('ForexAI Service initialized with API keys');
+    
+    if (this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key') {
+      console.log('🤖 ForexAI Service initialized with Perplexity AI');
+    }
   }
 
   // Check if service is ready
   isReady() {
-    return this.isInitialized && this.perplexityApiKey && this.fredApiKey;
+    return this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key';
+  }
+
+  // Check if FRED is ready
+  isFredReady() {
+    return this.fredApiKey && this.fredApiKey !== 'placeholder_for_fred_key';
   }
 
   // Generate Daily Market Recap using Perplexity AI
