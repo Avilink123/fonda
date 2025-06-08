@@ -7,8 +7,16 @@ class ForexAIService {
     this.fredApiKey = process.env.REACT_APP_FRED_API_KEY;
     this.isInitialized = true;
     
+    // Scheduled report times (GMT)
+    this.reportTimes = [
+      { hour: 7, minute: 0, name: "Ouverture Européenne" },   // 7:00 AM GMT
+      { hour: 12, minute: 0, name: "Ouverture Américaine" },  // 12:00 PM GMT  
+      { hour: 17, minute: 0, name: "Récap de Fin de Journée" } // 5:00 PM GMT
+    ];
+    
     if (this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key') {
       console.log('🤖 ForexAI Service initialized with Perplexity AI');
+      console.log('⏰ Scheduled reports: 7:00, 12:00, 17:00 GMT');
     }
   }
 
