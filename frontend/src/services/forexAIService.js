@@ -192,11 +192,10 @@ Highlight what traders are paying attention to, and forecast potential movement 
 Make sure your report is easy to understand by a high school student. The report must be in French.`;
       
       if (Object.keys(economicData).length > 0) {
-        prompt += `\n\nDonnées économiques récentes FRED:`;
+        prompt += `\n\nDonnées économiques FRED récentes à intégrer dans l'analyse:`;
         Object.entries(economicData).forEach(([indicator, data]) => {
           prompt += `\n- ${indicator}: ${data.value} (${data.date})`;
         });
-        prompt += `\n\nIntègre ces données officielles dans ton analyse.`;
       }
       
       prompt += `
