@@ -164,13 +164,13 @@ class ForexAIService {
       
       switch(currentTimeSlot) {
         case 0: // 7:00 AM - European Session
-          sessionContext = "Prépare les traders pour l'ouverture de la session européenne. Focus sur EUR, GBP, CHF.";
+          sessionContext = "Focus sur l'ouverture de la session européenne. Analysez particulièrement EUR/USD, GBP/USD, USD/CHF et l'impact sur les autres paires.";
           break;
         case 1: // 12:00 PM - American Session  
-          sessionContext = "Prépare les traders pour l'ouverture de la session américaine. Focus sur USD et impact sur toutes les paires.";
+          sessionContext = "Focus sur l'ouverture de la session américaine. Analysez l'impact du Dollar US sur toutes les paires majeures et les données économiques US.";
           break;
         case 2: // 5:00 PM - End of Day Recap
-          sessionContext = "Récapitulatif de fin de journée. Résume les mouvements de la journée et prépare pour la session asiatique.";
+          sessionContext = "Récapitulatif de fin de journée. Résumez les mouvements de toutes les sessions et préparez pour la session asiatique.";
           break;
       }
       
