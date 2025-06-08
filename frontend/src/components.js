@@ -2,17 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { ChevronDownIcon, TrendingUpIcon, TrendingDownIcon, ChartBarIcon, NewspaperIcon, CalendarIcon, CurrencyDollarIcon, GlobeAltIcon, ClockIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import forexAIService from './services/forexAIService';
 
-// Utility function to clean markdown formatting
+// Utility function to clean markdown formatting (Enhanced)
 const cleanMarkdown = (text) => {
   if (!text) return "";
   
   return text
+    // Remove all markdown formatting
     .replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold **text**
     .replace(/\*([^*]+)\*/g, '$1')      // Remove italic *text*
     .replace(/#{1,6}\s+/g, '')          // Remove headers
     .replace(/^\s*[-•]\s+/gm, '• ')     // Clean bullet points
     .replace(/^\s*\d+\.\s+/gm, '')      // Remove numbered lists
     .replace(/\[([^\]]+)\]/g, '$1')     // Remove brackets
+    .replace(/PARAGRAPHE\s*\d+\s*[-:]?\s*/gi, '') // Remove PARAGRAPHE mentions
+    .replace(/TITRE\s*[-:]?\s*/gi, '')   // Remove TITRE mentions
+    .replace(/Analyse\s+[A-Z]{3}\s*[-:]?\s*/gi, '') // Remove "Analyse EUR:" patterns
+    .replace(/([A-Z]{3}\/[A-Z]{3})\s*[-:]?\s*/g, '$1: ') // Clean currency pair formatting
     .replace(/\s{2,}/g, ' ')            // Multiple spaces to single
     .replace(/\n{3,}/g, '\n\n')         // Multiple newlines to double
     .trim();
