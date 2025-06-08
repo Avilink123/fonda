@@ -632,72 +632,81 @@ Fournis une analyse fondamentale complète de cette devise.`;
     };
   }
 
-  // Parse AI generated report into structured data
+  // Parse AI generated report into structured data (Enhanced)
   parseAIReport(aiResponse) {
     try {
-      // Extract sections using regex patterns
-      const summaryMatch = aiResponse.match(/\*\*RÉSUMÉ EXÉCUTIF:\*\*(.*?)(?=\*\*POINTS CLÉS|$)/s);
-      const sentiment = aiResponse.match(/\*\*SENTIMENT GLOBAL:\*\*(.*?)(?=\*\*|$)/s)?.[1]?.trim() || "Neutre";
-      const trendMatch = aiResponse.match(/\*\*TENDANCE PRINCIPALE:\*\*(.*?)(?=\*\*|$)/s);
-      const recommendationsMatch = aiResponse.match(/\*\*RECOMMANDATIONS:\*\*(.*?)(?=\*\*|$)/s);
+      // Extract sections using regex patterns for new structure
+      const overviewMatch = aiResponse.match(/\*\*APERÇU DU MARCHÉ:\*\*(.*?)(?=\*\*ANALYSE FONDAMENTALE|$)/s);
+      const sentimentMatch = aiResponse.match(/\*\*SENTIMENT DES TRADERS:\*\*(.*?)(?=\*\*PRÉVISIONS|$)/s);
+      const forecastMatch = aiResponse.match(/\*\*PRÉVISIONS SESSION:\*\*(.*?)(?=\*\*|$)/s);
+      const volatilityMatch = aiResponse.match(/\*\*DÉCLENCHEURS DE VOLATILITÉ:\*\*(.*?)(?=\*\*SENTIMENT|$)/s);
       
-      // Extract key points
-      const keyPointsSection = aiResponse.match(/\*\*POINTS CLÉS DU JOUR:\*\*(.*?)(?=\*\*SENTIMENT|$)/s)?.[1] || '';
-      const keyPoints = [];
-      
-      // Parse numbered points
-      const pointMatches = keyPointsSection.match(/\d+\.\s*\*\*([^*]+)\*\*(.*?)(?=\d+\.|$)/gs);
-      if (pointMatches) {
-        pointMatches.forEach((point, index) => {
-          const titleMatch = point.match(/\*\*([^*]+)\*\*/);
-          const description = point.replace(/\d+\.\s*\*\*[^*]+\*\*/, '').trim();
-          
-          if (titleMatch) {
-            // Determine impact based on keywords
-            const title = titleMatch[1].trim();
-            let impact = "neutre";
-            if (title.toLowerCase().includes('hausse') || title.toLowerCase().includes('positif') || title.toLowerCase().includes('soutien')) {
-              impact = "positif";
-            } else if (title.toLowerCase().includes('baisse') || title.toLowerCase().includes('négatif') || title.toLowerCase().includes('pression')) {
-              impact = "négatif";
-            }
-            
-            keyPoints.push({
-              title: title,
-              impact: impact,
-              description: description
+      // Extract currency pair analyses
+      const pairAnalyses = [];
+      const pairMatches = aiResponse.match(/\*\*([A-Z]{3}\/[A-Z]{3}):\*\*(.*?)(?=\*\*[A-Z]{3}\/[A-Z]{3}:|\*\*FACTEURS|$)/gs);
+      if (pairMatches) {
+        pairMatches.forEach(match => {
+          const pairMatch = match.match(/\*\*([A-Z]{3}\/[A-Z]{3}):\*\*(.*)/s);
+          if (pairMatch) {
+            pairAnalyses.push({
+              title: `Analyse ${pairMatch[1]}`,
+              impact: "neutre",
+              description: pairMatch[2].trim()
             });
           }
         });
       }
       
+      // Extract key factors
+      const factorsSection = aiResponse.match(/\*\*FACTEURS CLÉS À SURVEILLER:\*\*(.*?)(?=\*\*DÉCLENCHEURS|$)/s)?.[1] || '';
+      const factorMatches = factorsSection.match(/•\s*([^\n•]+)/g);
+      const keyPoints = [];
+      
+      if (factorMatches && factorMatches.length > 0) {
+        factorMatches.forEach(factor => {
+          const cleaned = factor.replace(/•\s*/, '').trim();
+          if (cleaned) {
+            keyPoints.push({
+              title: "Facteur clé à surveiller",
+              impact: "important",
+              description: cleaned
+            });
+          }
+        });
+      }
+      
+      // Add pair analyses to key points
+      if (pairAnalyses.length > 0) {
+        keyPoints.push(...pairAnalyses.slice(0, 3)); // Limit to 3 main pairs
+      }
+      
       // If no key points found, create default ones
       if (keyPoints.length === 0) {
         keyPoints.push(
-          { title: "Analyse générée par IA", impact: "neutre", description: "Rapport détaillé disponible ci-dessous" },
-          { title: "Données en temps réel", impact: "positif", description: "Utilisation de données FRED officielles" },
-          { title: "Marchés volatils", impact: "neutre", description: "Surveillance continue recommandée" }
+          { title: "Analyse fondamentale approfondie", impact: "positif", description: "Rapport professionnel généré par IA avec analyse de toutes les paires majeures" },
+          { title: "Facteurs macroéconomiques", impact: "neutre", description: "Intégration des données économiques et décisions des banques centrales" },
+          { title: "Sentiment institutionnel", impact: "important", description: "Analyse du positionnement des traders professionnels" }
         );
       }
       
       return {
-        summary: summaryMatch?.[1]?.trim() || aiResponse.substring(0, 200) + "...",
+        summary: overviewMatch?.[1]?.trim() || aiResponse.substring(0, 300) + "...",
         keyPoints: keyPoints,
-        sentiment: sentiment,
-        mainTrend: trendMatch?.[1]?.trim() || "Analyse en cours",
-        recommendations: recommendationsMatch?.[1]?.trim() || "Surveiller les développements"
+        sentiment: sentimentMatch?.[1]?.trim() || "Analyse approfondie générée",
+        mainTrend: volatilityMatch?.[1]?.trim() || "Surveillance des déclencheurs de volatilité",
+        recommendations: forecastMatch?.[1]?.trim() || "Voir prévisions détaillées dans le rapport complet"
       };
       
     } catch (error) {
-      console.error('❌ Error parsing AI report:', error);
+      console.error('❌ Error parsing enhanced AI report:', error);
       return {
         summary: aiResponse,
         keyPoints: [
-          { title: "Rapport IA", impact: "neutre", description: "Analyse complète disponible" }
+          { title: "Rapport IA approfondi", impact: "neutre", description: "Analyse fondamentale complète disponible" }
         ],
-        sentiment: "Analyse générée",
-        mainTrend: "Données en temps réel",
-        recommendations: "Voir rapport complet"
+        sentiment: "Analyse professionnelle générée",
+        mainTrend: "Recherche fondamentale avancée",
+        recommendations: "Voir rapport complet pour détails"
       };
     }
   }
