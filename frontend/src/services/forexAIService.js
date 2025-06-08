@@ -775,71 +775,87 @@ Fournis une analyse fondamentale complète de cette devise.`;
   // Parse currency analysis from AI response (Enhanced)
   parseCurrencyAnalysis(aiResponse) {
     try {
-      // Extract scores from new structure
-      const fundamentalMatch = aiResponse.match(/\*\*SCORE FONDAMENTAL:\*\*\s*(\d+)/);
-      const technicalMatch = aiResponse.match(/\*\*SCORE TECHNIQUE:\*\*\s*(\d+)/);
-      const recommendationMatch = aiResponse.match(/\*\*RECOMMANDATION:\*\*\s*(ACHAT|VENTE|NEUTRE)/);
-      const confidenceMatch = aiResponse.match(/\*\*CONFIANCE:\*\*\s*(\d+)/);
+      // Clean the response first
+      const cleanResponse = this.cleanText(aiResponse);
       
-      // Extract detailed sections
-      const situationMatch = aiResponse.match(/\*\*SITUATION ACTUELLE [A-Z]{3}:\*\*(.*?)(?=\*\*ANALYSE FONDAMENTALE|$)/s);
-      const monetaryMatch = aiResponse.match(/\*\*Politique Monétaire:\*\*(.*?)(?=\*\*Économie|$)/s);
-      const economyMatch = aiResponse.match(/\*\*Économie:\*\*(.*?)(?=\*\*Facteurs Politiques|$)/s);
-      const politicalMatch = aiResponse.match(/\*\*Facteurs Politiques:\*\*(.*?)(?=\*\*Sentiment de Marché|$)/s);
-      const sentimentMatch = aiResponse.match(/\*\*Sentiment de Marché:\*\*(.*?)(?=\*\*CATALYSEURS|$)/s);
-      const forecastMatch = aiResponse.match(/\*\*PRÉVISION [A-Z]{3}:\*\*(.*?)(?=\*\*SCORE|$)/s);
+      // Extract scores from cleaned structure
+      const fundamentalMatch = cleanResponse.match(/SCORE FONDAMENTAL:?\s*(\d+)/i);
+      const technicalMatch = cleanResponse.match(/SCORE TECHNIQUE:?\s*(\d+)/i);
+      const recommendationMatch = cleanResponse.match(/RECOMMANDATION:?\s*(ACHAT|VENTE|NEUTRE)/i);
+      const confidenceMatch = cleanResponse.match(/CONFIANCE:?\s*(\d+)/i);
       
-      // Extract catalysts
-      const catalystsSection = aiResponse.match(/\*\*CATALYSEURS À SURVEILLER:\*\*(.*?)(?=\*\*ANALYSE TECHNIQUE|$)/s)?.[1] || '';
+      // Extract detailed sections (cleaned)
+      const situationMatch = cleanResponse.match(/SITUATION ACTUELLE [A-Z]{3}:?\s*(.*?)(?=ANALYSE FONDAMENTALE|$)/is);
+      const monetaryMatch = cleanResponse.match(/Politique Monétaire:?\s*(.*?)(?=Économie|$)/is);
+      const economyMatch = cleanResponse.match(/Économie:?\s*(.*?)(?=Facteurs Politiques|$)/is);
+      const politicalMatch = cleanResponse.match(/Facteurs Politiques:?\s*(.*?)(?=Sentiment de Marché|$)/is);
+      const sentimentMatch = cleanResponse.match(/Sentiment de Marché:?\s*(.*?)(?=CATALYSEURS|$)/is);
+      const forecastMatch = cleanResponse.match(/PRÉVISION [A-Z]{3}:?\s*(.*?)(?=SCORE|$)/is);
+      
+      // Extract catalysts (cleaned)
+      const catalystsSection = cleanResponse.match(/CATALYSEURS À SURVEILLER:?\s*(.*?)(?=ANALYSE TECHNIQUE|$)/is)?.[1] || '';
       const keyFactors = [];
-      const catalystMatches = catalystsSection.match(/•\s*([^\n•]+)/g);
-      if (catalystMatches) {
-        catalystMatches.forEach(catalyst => {
-          const cleaned = catalyst.replace(/•\s*/, '').trim();
-          if (cleaned) keyFactors.push(cleaned);
-        });
-      }
       
-      // Build comprehensive factors list
+      // Extract bullet points without formatting
+      const catalystLines = catalystsSection.split('\n').filter(line => line.trim());
+      catalystLines.forEach(line => {
+        const cleaned = line.replace(/^[•\-\*]\s*/, '').trim();
+        if (cleaned && cleaned.length > 10) { // Minimum meaningful length
+          keyFactors.push(cleaned);
+        }
+      });
+      
+      // Build comprehensive factors list (all cleaned)
       const comprehensiveFactors = [];
-      if (monetaryMatch?.[1]?.trim()) comprehensiveFactors.push(`Politique monétaire: ${monetaryMatch[1].trim()}`);
-      if (economyMatch?.[1]?.trim()) comprehensiveFactors.push(`Économie: ${economyMatch[1].trim()}`);
-      if (politicalMatch?.[1]?.trim()) comprehensiveFactors.push(`Politique: ${politicalMatch[1].trim()}`);
-      if (sentimentMatch?.[1]?.trim()) comprehensiveFactors.push(`Sentiment: ${sentimentMatch[1].trim()}`);
+      if (monetaryMatch?.[1]?.trim()) {
+        comprehensiveFactors.push(`Politique monétaire: ${this.cleanText(monetaryMatch[1]).substring(0, 80)}`);
+      }
+      if (economyMatch?.[1]?.trim()) {
+        comprehensiveFactors.push(`Économie: ${this.cleanText(economyMatch[1]).substring(0, 80)}`);
+      }
+      if (politicalMatch?.[1]?.trim()) {
+        comprehensiveFactors.push(`Politique: ${this.cleanText(politicalMatch[1]).substring(0, 80)}`);
+      }
+      if (sentimentMatch?.[1]?.trim()) {
+        comprehensiveFactors.push(`Sentiment: ${this.cleanText(sentimentMatch[1]).substring(0, 80)}`);
+      }
       
       // Use catalysts if comprehensive factors are empty
       const finalFactors = comprehensiveFactors.length > 0 ? comprehensiveFactors : keyFactors;
       
-      // Default factors if none found
+      // Professional default factors if none found
       if (finalFactors.length === 0) {
         finalFactors.push(
           "Analyse fondamentale approfondie en cours",
-          "Surveillance des décisions de banque centrale",
+          "Surveillance des décisions de banque centrale", 
           "Évaluation des données macroéconomiques",
           "Suivi du sentiment de marché institutionnel"
         );
       }
       
-      // Determine sentiment from situation or forecast
+      // Determine professional sentiment from cleaned content
       let sentiment = "Analyse professionnelle";
-      if (situationMatch?.[1]) {
-        const situationText = situationMatch[1].toLowerCase();
-        if (situationText.includes('positif') || situationText.includes('hausse') || situationText.includes('fort')) {
-          sentiment = "Haussier modéré";
-        } else if (situationText.includes('négatif') || situationText.includes('baisse') || situationText.includes('faible')) {
-          sentiment = "Baissier modéré";
-        } else {
-          sentiment = "Neutre avec surveillance";
-        }
+      const combinedText = (situationMatch?.[1] || '') + (forecastMatch?.[1] || '');
+      const lowerText = combinedText.toLowerCase();
+      
+      if (lowerText.includes('positif') || lowerText.includes('hausse') || lowerText.includes('fort') || lowerText.includes('soutien')) {
+        sentiment = "Tendance haussière modérée";
+      } else if (lowerText.includes('négatif') || lowerText.includes('baisse') || lowerText.includes('faible') || lowerText.includes('pression')) {
+        sentiment = "Tendance baissière modérée";
+      } else {
+        sentiment = "Consolidation avec surveillance active";
       }
+      
+      // Clean forecast text
+      const cleanForecast = this.cleanText(forecastMatch?.[1] || situationMatch?.[1] || cleanResponse);
       
       return {
         fundamentalScore: parseInt(fundamentalMatch?.[1]) || 75,
         technicalScore: parseInt(technicalMatch?.[1]) || 70,
         sentiment: sentiment,
-        keyFactors: finalFactors.slice(0, 4), // Limit to 4 factors for display
-        forecast: forecastMatch?.[1]?.trim() || situationMatch?.[1]?.trim() || aiResponse,
-        aiRating: recommendationMatch?.[1] || "NEUTRE",
+        keyFactors: finalFactors.slice(0, 4), // Limit to 4 for clean display
+        forecast: cleanForecast.substring(0, 250) + (cleanForecast.length > 250 ? "..." : ""),
+        aiRating: recommendationMatch?.[1]?.toUpperCase() || "NEUTRE",
         confidence: parseInt(confidenceMatch?.[1]) || 80
       };
       
@@ -849,8 +865,13 @@ Fournis une analyse fondamentale complète de cette devise.`;
         fundamentalScore: 75,
         technicalScore: 70,
         sentiment: "Analyse professionnelle générée",
-        keyFactors: ["Recherche fondamentale avancée", "Analyse macroéconomique", "Surveillance banques centrales", "Évaluation sentiment marché"],
-        forecast: aiResponse,
+        keyFactors: [
+          "Recherche fondamentale avancée", 
+          "Analyse macroéconomique détaillée", 
+          "Surveillance banques centrales",
+          "Évaluation sentiment de marché"
+        ],
+        forecast: this.cleanText(aiResponse).substring(0, 250) + "...",
         aiRating: "NEUTRE",
         confidence: 80
       };
