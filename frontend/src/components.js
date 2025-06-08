@@ -299,7 +299,7 @@ export const DailyMarketRecap = () => {
                     <div className="mt-3 p-4 bg-white rounded-lg border border-blue-200">
                       <div className="prose prose-sm prose-slate max-w-none">
                         <div className="text-slate-700 whitespace-pre-line leading-relaxed">
-                          {marketRecapData.rawReport}
+                          {cleanMarkdown(marketRecapData.rawReport)}
                         </div>
                       </div>
                     </div>
