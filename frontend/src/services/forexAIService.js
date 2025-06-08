@@ -88,35 +88,49 @@ class ForexAIService {
   // Private Methods
 
   async callPerplexityAI(prompt) {
-    const response = await fetch(API_CONFIG.PERPLEXITY.BASE_URL + API_CONFIG.PERPLEXITY.ENDPOINTS.CHAT, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.perplexityApiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: API_CONFIG.PERPLEXITY.MODEL,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a professional forex analyst with expertise in fundamental analysis. Provide accurate, actionable insights in French.'
-          },
-          {
-            role: 'user', 
-            content: prompt
-          }
-        ],
-        max_tokens: API_CONFIG.PERPLEXITY.MAX_TOKENS,
-        temperature: API_CONFIG.PERPLEXITY.TEMPERATURE
-      })
-    });
+    console.log('🤖 Calling Perplexity AI with prompt:', prompt.substring(0, 100) + '...');
+    
+    try {
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.perplexityApiKey}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-small-128k-online',
+          messages: [
+            {
+              role: 'system',
+              content: 'Tu es un analyste forex professionnel expert en analyse fondamentale. Fournis des analyses précises et actionnables en français pour les traders forex. Sois concis mais complet.'
+            },
+            {
+              role: 'user', 
+              content: prompt
+            }
+          ],
+          max_tokens: 1500,
+          temperature: 0.2,
+          top_p: 0.9,
+          stream: false
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`Perplexity AI API error: ${response.status}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Perplexity API Error:', response.status, errorText);
+        throw new Error(`Perplexity API error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Perplexity AI Response received');
+      return data.choices[0].message.content;
+      
+    } catch (error) {
+      console.error('❌ Error calling Perplexity AI:', error);
+      throw error;
     }
-
-    const data = await response.json();
-    return data.choices[0].message.content;
   }
 
   async getFredData(indicator, startDate = null, endDate = null) {
