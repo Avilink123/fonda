@@ -254,7 +254,9 @@ Maximum 400 mots. Langage professionnel mais accessible à un lycéen.`;
         timestamp: new Date().toISOString(),
         source: 'Perplexity AI + FRED Data (Programmé)',
         rawReport: aiResponse,
-        nextGeneration: this.getNextReportTime()
+        nextGeneration: this.getNextReportTime(),
+        isScheduled: true,
+        status: `Rapport ${generationCheck.session} - ${new Date().toLocaleTimeString('fr-FR', {timeZone: 'GMT'})} GMT`
       };
       
       // Cache the report
