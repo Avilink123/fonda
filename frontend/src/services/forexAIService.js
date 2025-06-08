@@ -138,16 +138,20 @@ class ForexAIService {
     // Check if we're in a generation window
     const generationCheck = this.shouldGenerateNewReport();
     if (!generationCheck.should) {
-      console.log('⏰ Not in generation window. Next report:', this.getNextReportTime());
+      console.log('⏰ Hors créneau de génération. Dernier rapport disponible');
       
-      // Return last report or mock data with next generation time
+      // Always return the last available report with timing info
       if (reportInfo.lastReport) {
         reportInfo.lastReport.nextGeneration = this.getNextReportTime();
+        reportInfo.lastReport.isScheduled = true;
+        reportInfo.lastReport.status = "Rapport précédent";
         return reportInfo.lastReport;
       } else {
         const mockData = this.getMockDailyRecap();
-        mockData.summary = `Prochain rapport IA programmé à ${this.getNextReportTime()}. Données de démonstration affichées.`;
+        mockData.summary = `Le premier rapport de la journée sera généré à ${this.getNextReportTime()}. Données d'exemple affichées en attendant.`;
         mockData.nextGeneration = this.getNextReportTime();
+        mockData.isScheduled = true;
+        mockData.status = "En attente du premier rapport";
         return mockData;
       }
     }
