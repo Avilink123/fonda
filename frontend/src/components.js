@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { forexAIService } from '../services/forexAIService';
 import { ChevronDownIcon, TrendingUpIcon, TrendingDownIcon, ChartBarIcon, NewspaperIcon, CalendarIcon, CurrencyDollarIcon, GlobeAltIcon, ClockIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
 // Navigation Component
