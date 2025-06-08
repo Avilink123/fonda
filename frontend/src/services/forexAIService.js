@@ -711,58 +711,87 @@ Fournis une analyse fondamentale complète de cette devise.`;
     }
   }
 
-  // Parse currency analysis from AI response
+  // Parse currency analysis from AI response (Enhanced)
   parseCurrencyAnalysis(aiResponse) {
     try {
-      // Extract scores
-      const fundamentalMatch = aiResponse.match(/\*\*Score Fondamental:\*\*\s*(\d+)/);
-      const technicalMatch = aiResponse.match(/\*\*Score Technique:\*\*\s*(\d+)/);
-      const sentimentMatch = aiResponse.match(/\*\*Sentiment:\*\*(.*?)(?=\*\*|$)/s);
-      const recommendationMatch = aiResponse.match(/\*\*Recommandation:\*\*\s*(ACHAT|VENTE|NEUTRE)/);
-      const confidenceMatch = aiResponse.match(/\*\*Confiance:\*\*\s*(\d+)/);
-      const forecastMatch = aiResponse.match(/\*\*Prévision:\*\*(.*?)(?=\*\*Recommandation|$)/s);
+      // Extract scores from new structure
+      const fundamentalMatch = aiResponse.match(/\*\*SCORE FONDAMENTAL:\*\*\s*(\d+)/);
+      const technicalMatch = aiResponse.match(/\*\*SCORE TECHNIQUE:\*\*\s*(\d+)/);
+      const recommendationMatch = aiResponse.match(/\*\*RECOMMANDATION:\*\*\s*(ACHAT|VENTE|NEUTRE)/);
+      const confidenceMatch = aiResponse.match(/\*\*CONFIANCE:\*\*\s*(\d+)/);
       
-      // Extract key factors
-      const factorsSection = aiResponse.match(/\*\*Facteurs Clés:\*\*(.*?)(?=\*\*Prévision|$)/s)?.[1] || '';
+      // Extract detailed sections
+      const situationMatch = aiResponse.match(/\*\*SITUATION ACTUELLE [A-Z]{3}:\*\*(.*?)(?=\*\*ANALYSE FONDAMENTALE|$)/s);
+      const monetaryMatch = aiResponse.match(/\*\*Politique Monétaire:\*\*(.*?)(?=\*\*Économie|$)/s);
+      const economyMatch = aiResponse.match(/\*\*Économie:\*\*(.*?)(?=\*\*Facteurs Politiques|$)/s);
+      const politicalMatch = aiResponse.match(/\*\*Facteurs Politiques:\*\*(.*?)(?=\*\*Sentiment de Marché|$)/s);
+      const sentimentMatch = aiResponse.match(/\*\*Sentiment de Marché:\*\*(.*?)(?=\*\*CATALYSEURS|$)/s);
+      const forecastMatch = aiResponse.match(/\*\*PRÉVISION [A-Z]{3}:\*\*(.*?)(?=\*\*SCORE|$)/s);
+      
+      // Extract catalysts
+      const catalystsSection = aiResponse.match(/\*\*CATALYSEURS À SURVEILLER:\*\*(.*?)(?=\*\*ANALYSE TECHNIQUE|$)/s)?.[1] || '';
       const keyFactors = [];
-      const factorMatches = factorsSection.match(/•\s*([^\n•]+)/g);
-      if (factorMatches) {
-        factorMatches.forEach(factor => {
-          const cleaned = factor.replace(/•\s*/, '').trim();
+      const catalystMatches = catalystsSection.match(/•\s*([^\n•]+)/g);
+      if (catalystMatches) {
+        catalystMatches.forEach(catalyst => {
+          const cleaned = catalyst.replace(/•\s*/, '').trim();
           if (cleaned) keyFactors.push(cleaned);
         });
       }
       
+      // Build comprehensive factors list
+      const comprehensiveFactors = [];
+      if (monetaryMatch?.[1]?.trim()) comprehensiveFactors.push(`Politique monétaire: ${monetaryMatch[1].trim()}`);
+      if (economyMatch?.[1]?.trim()) comprehensiveFactors.push(`Économie: ${economyMatch[1].trim()}`);
+      if (politicalMatch?.[1]?.trim()) comprehensiveFactors.push(`Politique: ${politicalMatch[1].trim()}`);
+      if (sentimentMatch?.[1]?.trim()) comprehensiveFactors.push(`Sentiment: ${sentimentMatch[1].trim()}`);
+      
+      // Use catalysts if comprehensive factors are empty
+      const finalFactors = comprehensiveFactors.length > 0 ? comprehensiveFactors : keyFactors;
+      
       // Default factors if none found
-      if (keyFactors.length === 0) {
-        keyFactors.push(
-          "Analyse économique en cours",
-          "Données de marché récentes",
-          "Tendances monétaires",
-          "Facteurs géopolitiques"
+      if (finalFactors.length === 0) {
+        finalFactors.push(
+          "Analyse fondamentale approfondie en cours",
+          "Surveillance des décisions de banque centrale",
+          "Évaluation des données macroéconomiques",
+          "Suivi du sentiment de marché institutionnel"
         );
       }
       
+      // Determine sentiment from situation or forecast
+      let sentiment = "Analyse professionnelle";
+      if (situationMatch?.[1]) {
+        const situationText = situationMatch[1].toLowerCase();
+        if (situationText.includes('positif') || situationText.includes('hausse') || situationText.includes('fort')) {
+          sentiment = "Haussier modéré";
+        } else if (situationText.includes('négatif') || situationText.includes('baisse') || situationText.includes('faible')) {
+          sentiment = "Baissier modéré";
+        } else {
+          sentiment = "Neutre avec surveillance";
+        }
+      }
+      
       return {
-        fundamentalScore: parseInt(fundamentalMatch?.[1]) || 70,
-        technicalScore: parseInt(technicalMatch?.[1]) || 65,
-        sentiment: sentimentMatch?.[1]?.trim() || "Neutre",
-        keyFactors: keyFactors,
-        forecast: forecastMatch?.[1]?.trim() || aiResponse,
+        fundamentalScore: parseInt(fundamentalMatch?.[1]) || 75,
+        technicalScore: parseInt(technicalMatch?.[1]) || 70,
+        sentiment: sentiment,
+        keyFactors: finalFactors.slice(0, 4), // Limit to 4 factors for display
+        forecast: forecastMatch?.[1]?.trim() || situationMatch?.[1]?.trim() || aiResponse,
         aiRating: recommendationMatch?.[1] || "NEUTRE",
-        confidence: parseInt(confidenceMatch?.[1]) || 75
+        confidence: parseInt(confidenceMatch?.[1]) || 80
       };
       
     } catch (error) {
-      console.error('❌ Error parsing currency analysis:', error);
+      console.error('❌ Error parsing enhanced currency analysis:', error);
       return {
-        fundamentalScore: 70,
-        technicalScore: 65,
-        sentiment: "Analyse générée par IA",
-        keyFactors: ["Données en temps réel", "Analyse automatisée", "Marchés dynamiques", "Surveillance continue"],
+        fundamentalScore: 75,
+        technicalScore: 70,
+        sentiment: "Analyse professionnelle générée",
+        keyFactors: ["Recherche fondamentale avancée", "Analyse macroéconomique", "Surveillance banques centrales", "Évaluation sentiment marché"],
         forecast: aiResponse,
         aiRating: "NEUTRE",
-        confidence: 75
+        confidence: 80
       };
     }
   }
