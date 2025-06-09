@@ -425,7 +425,7 @@ export const CurrencyAnalysis = () => {
             Analyse Fondamentale des Devises
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Analyse IA approfondie des 7 devises majeures avec scores fondamentaux et techniques
+            Analyse IA approfondie des 7 devises majeures avec scores fondamentaux exclusivement
           </p>
         </div>
 
