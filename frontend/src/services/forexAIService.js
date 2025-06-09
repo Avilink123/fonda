@@ -235,7 +235,7 @@ Recommandations trading: Formule des conseils stratégiques concrets pour les tr
         },
         economicData: economicData,
         timestamp: new Date().toISOString(),
-        source: 'Perplexity AI + FRED Data (Programmé)',
+        source: aiSource + ' (Programmé)',
         rawReport: aiResponse,
         nextGeneration: this.getNextReportTime(),
         isScheduled: true,
