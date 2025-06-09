@@ -288,25 +288,29 @@ Recommandations fondamentales: Formule des conseils basés uniquement sur l'anal
     try {
       console.log(`🤖 Generating fresh analysis for ${currency}...`);
       
-      const prompt = `Tu es un analyste fondamental forex institutionnel expert spécialisé dans la devise ${currency}. Produis une analyse fondamentale pure et professionnelle.
+      const prompt = `Tu es un analyste fondamental forex institutionnel expert spécialisé dans la devise ${currency}. Produis une analyse fondamentale structurée et professionnelle.
 
-ANALYSE FONDAMENTALE PURE ${currency}:
+Rédige ton analyse avec cette structure EXACTE:
 
-Évalue exclusivement la situation fondamentale de la devise ${currency}:
+Contexte Macroéconomique:
+[Analyse la banque centrale, l'inflation actuelle, la croissance économique et l'emploi. Explique comment ces indicateurs économiques influencent la devise.]
 
-Contexte macroéconomique: Analyse la banque centrale, l'inflation actuelle, la croissance économique (PIB), l'emploi et la balance commerciale. Explique comment ces indicateurs économiques influencent fondamentalement la devise.
+Politique Monétaire:
+[Examine les dernières décisions de taux, les communications officielles de la banque centrale et les perspectives futures. Analyse l'impact sur les flux de capitaux.]
 
-Politique monétaire: Examine en détail les dernières décisions de taux, les communications officielles de la banque centrale, les perspectives d'inflation et l'orientation future de la politique monétaire. Analyse l'impact sur les flux de capitaux.
+Environnement Économique:
+[Évalue la santé globale de l'économie, les déficits budgétaires, la dette publique et la stabilité politique.]
 
-Environnement économique: Évalue la santé globale de l'économie, les déficits budgétaires/excédents, la dette publique, la stabilité politique et les réformes structurelles en cours.
+Facteurs Fondamentaux Externes:
+[Identifie les relations commerciales internationales, les prix des matières premières et les flux d'investissements étrangers.]
 
-Facteurs fondamentaux externes: Identifie les relations commerciales internationales, les prix des matières premières (si pertinent), les flux d'investissements étrangers et les facteurs géopolitiques économiques.
+Perspective Économique:
+[Synthétise l'analyse en une évaluation claire de la direction probable de la devise basée sur les fondamentaux économiques.]
 
-Perspective économique: Synthétise ton analyse fondamentale en une évaluation claire de la direction probable de la devise basée uniquement sur les fondamentaux économiques.
+Recommandation:
+[ACHAT/VENTE/NEUTRE] avec [70 à 90] pour cent de confiance basée sur l'analyse fondamentale.
 
-Termine par: Recommandation [ACHAT/VENTE/NEUTRE] avec [70-90] pour cent de confiance basée sur l'analyse fondamentale.
-
-Produis une analyse fondamentale pure en français professionnel naturel, structurée en paragraphes distincts. AUCUNE analyse technique, graphiques, niveaux de prix ou références aux charts. Focus exclusif sur économie et fondamentaux. Maximum 350 mots.`;
+IMPORTANT: Respecte exactement cette structure avec les titres. Écris en français naturel, sans formatage technique. Maximum 400 mots au total.`;
       
       
       const aiResponse = await this.callAI(prompt);
