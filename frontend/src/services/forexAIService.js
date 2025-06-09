@@ -319,7 +319,7 @@ Produis une analyse en français professionnel naturel, structurée en paragraph
       const analysisData = {
         ...parsedAnalysis,
         timestamp: new Date().toISOString(),
-        source: 'Perplexity AI (Optimisé)',
+        source: aiSource,
         rawAnalysis: aiResponse
       };
       
