@@ -738,7 +738,7 @@ Fournis une analyse fondamentale complète de cette devise.`;
       // Look for structured sections
       const contextMatch = cleanResponse.match(/Contexte Macroéconomique:\s*(.*?)(?=EUR\/USD|$)/is);
       const eurUsdMatch = cleanResponse.match(/EUR\/USD Fondamental:\s*(.*?)(?=GBP\/USD|$)/is);
-      const gbpUsdMatch = cleanResponse.match/GBP\/USD Fondamental:\s*(.*?)(?=USD\/JPY|$)/is);
+      const gbpUsdMatch = cleanResponse.match(/GBP\/USD Fondamental:\s*(.*?)(?=USD\/JPY|$)/is);
       const usdJpyMatch = cleanResponse.match(/USD\/JPY Fondamental:\s*(.*?)(?=Catalyseurs|$)/is);
       const catalystsMatch = cleanResponse.match(/Catalyseurs Économiques:\s*(.*?)(?=Recommandations|$)/is);
       const recommendationsMatch = cleanResponse.match(/Recommandations Fondamentales:\s*(.*?)$/is);
