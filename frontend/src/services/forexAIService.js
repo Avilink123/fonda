@@ -119,9 +119,15 @@ class ForexAIService {
     return this.fredApiKey && this.fredApiKey !== 'placeholder_for_fred_key';
   }
 
-  // Check if service is ready
+  // Check if service is ready (Claude preferred, Perplexity fallback)
   isReady() {
-    return this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key';
+    return (this.claudeApiKey && this.claudeApiKey !== 'placeholder_for_claude_key') ||
+           (this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key');
+  }
+
+  // Check if Claude is available
+  isClaudeReady() {
+    return this.claudeApiKey && this.claudeApiKey !== 'placeholder_for_claude_key';
   }
 
   // Generate Daily Market Recap using Perplexity AI + FRED Data (Scheduled)
