@@ -213,13 +213,13 @@ Recommandations Fondamentales:
 [Formule des conseils basés uniquement sur l'analyse des fondamentaux économiques.]`;
       
       if (Object.keys(economicData).length > 0) {
-        prompt += `\n\nDonnées économiques FRED à analyser dans ton approche fondamentale:`;
+        prompt += `\n\nDonnées économiques FRED à analyser:`;
         Object.entries(economicData).forEach(([indicator, data]) => {
           prompt += `\n${indicator}: ${data.value} (${data.date})`;
         });
       }
 
-      prompt += `\n\nProduis une analyse fondamentale pure en français naturel, structurée en paragraphes distincts. AUCUNE analyse technique, graphiques ou niveaux de prix. Focus exclusif sur économie, politique monétaire et fondamentaux. Maximum 400 mots.`;
+      prompt += `\n\nIMPORTANT: Respecte exactement cette structure avec les titres. Écris en français naturel, sans formatage technique. AUCUNE analyse technique. Maximum 450 mots au total.`;
       
       const aiResponse = await this.callAI(prompt);
       const aiSource = this.isClaudeReady() ? 'Claude 3.5 Sonnet + FRED Data' : 'Perplexity AI + FRED Data';
