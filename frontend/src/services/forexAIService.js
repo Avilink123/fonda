@@ -288,29 +288,25 @@ Recommandations trading: Formule des conseils stratégiques concrets pour les tr
     try {
       console.log(`🤖 Generating fresh analysis for ${currency}...`);
       
-      const prompt = `Tu es un analyste forex français expert. Rédige une analyse claire de ${currency}.
+      const prompt = `Tu es un analyste forex institutionnel expert spécialisé dans la devise ${currency}. Produis une analyse fondamentale approfondie et professionnelle.
 
-INSTRUCTIONS STRICTES:
-- Écris en français naturel uniquement
-- Aucun formatage technique (pas de **, •, PARAGRAPHE, etc.)
-- Sépare tes idées par des paragraphes simples
-- Pas de titres ou sous-titres dans le texte
+ANALYSE FONDAMENTALE ${currency}:
 
-Rédige ton analyse ainsi:
+Évalue la situation actuelle de la devise ${currency} en considérant:
 
-Première partie: Vue d'ensemble actuelle de la devise ${currency} en 2-3 phrases.
+Contexte macroéconomique: Analyse la sanque centrale, l'inflation, la croissance économique et l'emploi. Explique comment ces facteurs influencent actuellement la devise.
 
-Deuxième partie: Explique la politique monétaire de la banque centrale et les taux d'intérêt.
+Politique monétaire: Examine les dernières décisions de taux, les communications officielles et les perspectives futures de la banque centrale. Analyse l'impact sur les flux de capitaux.
 
-Troisième partie: Décris la situation économique (inflation, emploi, croissance).
+Environnement de marché: Évalue le sentiment des investisseurs, les positionnements institutionnels, l'aversion au risque et les correlations avec les autres actifs.
 
-Quatrième partie: Analyse les facteurs politiques et de marché qui influencent cette devise.
+Catalyseurs à surveiller: Identifie les événements économiques, politiques ou géopolitiques qui pourraient impacter significativement cette devise dans les prochaines semaines.
 
-Cinquième partie: Donne ta perspective pour les prochaines semaines.
+Perspective trading: Synthétise ton analyse en une recommandation claire avec un niveau de confiance. Explique les niveaux techniques clés à surveiller.
 
-Termine par: Recommandation [ACHAT/VENTE/NEUTRE] avec [60-95] pour cent de confiance.
+Termine par: Recommandation [ACHAT/VENTE/NEUTRE] avec [65-90] pour cent de confiance.
 
-Maximum 300 mots. Français fluide et professionnel uniquement.`;
+Produis une analyse en français professionnel naturel, structurée en paragraphes distincts. Maximum 350 mots.`;
       
       
       const aiResponse = await this.callPerplexityAI(prompt);
