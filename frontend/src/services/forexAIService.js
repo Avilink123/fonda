@@ -726,85 +726,77 @@ Fournis une analyse fondamentale complète de cette devise.`;
     
     return sections;
   }
-  // Parse AI generated report into structured data (Simplified & Clean)
+  // Parse AI generated report into structured data (Document Format)
   parseAIReport(aiResponse) {
     try {
-      // Clean the response completely
+      // Clean the response completely first
       const cleanResponse = this.cleanText(aiResponse);
       
-      // Split into paragraphs
-      const paragraphs = cleanResponse.split('\n\n').filter(p => p.trim() && p.length > 10);
+      // Extract sections with clear titles like in the document
+      const sections = {};
       
-      // Extract summary (first meaningful paragraph)
-      let summary = paragraphs.find(p => p.length > 50) || cleanResponse.substring(0, 300);
+      // Look for structured sections
+      const contextMatch = cleanResponse.match(/Contexte Macroéconomique:\s*(.*?)(?=EUR\/USD|$)/is);
+      const eurUsdMatch = cleanResponse.match(/EUR\/USD Fondamental:\s*(.*?)(?=GBP\/USD|$)/is);
+      const gbpUsdMatch = cleanResponse.match/GBP\/USD Fondamental:\s*(.*?)(?=USD\/JPY|$)/is);
+      const usdJpyMatch = cleanResponse.match(/USD\/JPY Fondamental:\s*(.*?)(?=Catalyseurs|$)/is);
+      const catalystsMatch = cleanResponse.match(/Catalyseurs Économiques:\s*(.*?)(?=Recommandations|$)/is);
+      const recommendationsMatch = cleanResponse.match(/Recommandations Fondamentales:\s*(.*?)$/is);
       
-      // Create clean key points from paragraphs
+      // Build key points from structured sections
       const keyPoints = [];
       
-      // Look for currency pairs in paragraphs
-      paragraphs.forEach(paragraph => {
-        const p = paragraph.trim();
-        if (p.includes('EUR') && p.includes('USD') && p.length > 30) {
-          keyPoints.push({
-            title: "EUR/USD",
-            impact: this.determinePairImpact(p),
-            description: p.substring(0, 150) + (p.length > 150 ? "..." : "")
-          });
-        } else if (p.includes('GBP') && p.includes('USD') && p.length > 30) {
-          keyPoints.push({
-            title: "GBP/USD", 
-            impact: this.determinePairImpact(p),
-            description: p.substring(0, 150) + (p.length > 150 ? "..." : "")
-          });
-        } else if (p.includes('USD') && p.includes('JPY') && p.length > 30) {
-          keyPoints.push({
-            title: "USD/JPY",
-            impact: this.determinePairImpact(p),
-            description: p.substring(0, 150) + (p.length > 150 ? "..." : "")
-          });
-        }
-      });
-      
-      // If no currency pairs found, create general key points
-      if (keyPoints.length === 0) {
-        paragraphs.slice(1, 4).forEach((paragraph, index) => {
-          if (paragraph.trim().length > 20) {
-            keyPoints.push({
-              title: `Point d'analyse ${index + 1}`,
-              impact: "important",
-              description: paragraph.trim().substring(0, 150) + (paragraph.length > 150 ? "..." : "")
-            });
-          }
+      if (eurUsdMatch && eurUsdMatch[1]) {
+        keyPoints.push({
+          title: "EUR/USD Fondamental",
+          impact: this.determinePairImpact(eurUsdMatch[1]),
+          description: eurUsdMatch[1].trim().substring(0, 200)
         });
       }
       
-      // Extract sentiment and trends from text
-      const fullText = cleanResponse.toLowerCase();
-      let sentiment = "Surveillance active";
-      if (fullText.includes('optimiste') || fullText.includes('positif') || fullText.includes('hausse')) {
-        sentiment = "Optimiste modéré";
-      } else if (fullText.includes('pessimiste') || fullText.includes('négatif') || fullText.includes('baisse')) {
-        sentiment = "Prudence recommandée";
+      if (gbpUsdMatch && gbpUsdMatch[1]) {
+        keyPoints.push({
+          title: "GBP/USD Fondamental",
+          impact: this.determinePairImpact(gbpUsdMatch[1]),
+          description: gbpUsdMatch[1].trim().substring(0, 200)
+        });
+      }
+      
+      if (usdJpyMatch && usdJpyMatch[1]) {
+        keyPoints.push({
+          title: "USD/JPY Fondamental",
+          impact: this.determinePairImpact(usdJpyMatch[1]),
+          description: usdJpyMatch[1].trim().substring(0, 200)
+        });
+      }
+      
+      // If no structured sections, create fallback key points
+      if (keyPoints.length === 0) {
+        keyPoints.push(
+          { title: "Analyse fondamentale", impact: "positif", description: "Rapport professionnel généré avec analyse complète des facteurs macroéconomiques" },
+          { title: "Surveillance des banques centrales", impact: "neutre", description: "Évaluation des politiques monétaires et de leur impact sur les devises" },
+          { title: "Contexte économique", impact: "important", description: "Analyse des données économiques et facteurs fondamentaux" }
+        );
       }
       
       return {
-        summary: summary.substring(0, 400) + (summary.length > 400 ? "..." : ""),
+        summary: contextMatch?.[1]?.trim() || cleanResponse.substring(0, 400),
         keyPoints: keyPoints.slice(0, 3),
-        sentiment: sentiment,
-        mainTrend: "Analyse fondamentale en cours",
-        recommendations: "Consulter l'analyse détaillée pour recommandations spécifiques"
+        sentiment: "Analyse fondamentale approfondie",
+        mainTrend: catalystsMatch?.[1]?.trim() || "Surveillance des catalyseurs économiques",
+        recommendations: recommendationsMatch?.[1]?.trim() || "Voir analyse détaillée pour recommandations spécifiques"
       };
       
     } catch (error) {
-      console.error('❌ Error parsing simplified AI report:', error);
+      console.error('❌ Error parsing structured AI report:', error);
       return {
         summary: this.cleanText(aiResponse).substring(0, 400),
         keyPoints: [
-          { title: "Analyse professionnelle", impact: "neutre", description: "Rapport d'analyse fondamentale généré par IA" }
+          { title: "Rapport structuré", impact: "neutre", description: "Analyse fondamentale complète disponible" }
         ],
-        sentiment: "Analyse en cours",
-        mainTrend: "Données en cours de traitement",
-        recommendations: "Voir rapport détaillé"
+        sentiment: "Analyse générée par IA",
+        mainTrend: "Recherche fondamentale structurée",
+        recommendations: "Consulter le rapport détaillé"
       };
     }
   }
