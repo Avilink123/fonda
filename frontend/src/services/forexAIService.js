@@ -188,23 +188,29 @@ class ForexAIService {
           break;
       }
       
-      let prompt = `Tu es un analyste forex fondamental institutionnel français de premier plan. Rédige une analyse fondamentale pure pour ${generationCheck.session}.
+      let prompt = `Tu es un analyste forex fondamental institutionnel français de premier plan. Rédige une analyse fondamentale structurée pour ${generationCheck.session}.
 
 ${sessionContext}
 
-ANALYSE FONDAMENTALE UNIQUEMENT:
+Rédige ton analyse avec cette structure EXACTE:
 
-Vue d'ensemble économique: Évalue le climat économique global aujourd'hui, en analysant les flux de capitaux internationaux, les politiques des banques centrales et les dynamiques macro-économiques dominantes.
+Contexte Macroéconomique:
+[Évalue le climat économique global aujourd'hui, en analysant les flux de capitaux internationaux et les dynamiques macro-économiques dominantes.]
 
-EUR/USD fondamental: Analyse exclusivement les facteurs fondamentaux: dernières décisions BCE, inflation zone euro, croissance économique européenne, politique fiscale, et compare avec les fondamentaux américains (Fed, inflation US, emploi).
+EUR/USD Fondamental:
+[Analyse exclusivement les facteurs fondamentaux: décisions BCE, inflation zone euro, croissance économique européenne versus fondamentaux américains.]
 
-GBP/USD fondamental: Examine uniquement les éléments fondamentaux: politique monétaire BoE, données économiques britanniques post-Brexit, inflation UK, croissance PIB, et facteurs structurels de l'économie britannique.
+GBP/USD Fondamental:
+[Examine uniquement les éléments fondamentaux: politique monétaire BoE, données économiques britanniques post-Brexit, inflation UK.]
 
-USD/JPY fondamental: Évalue la divergence fondamentale entre économies américaine et japonaise: politiques monétaires Fed/BoJ, inflation comparative, croissance économique, déficits commerciaux et flux de capitaux.
+USD/JPY Fondamental:
+[Évalue la divergence fondamentale entre économies américaine et japonaise: politiques monétaires Fed/BoJ, inflation comparative.]
 
-Catalyseurs économiques: Identifie trois facteurs économiques fondamentaux majeurs qui pourraient impacter les devises cette session: annonces de banques centrales, données macro, politiques gouvernementales.
+Catalyseurs Économiques:
+[Identifie trois facteurs économiques fondamentaux majeurs qui pourraient impacter les devises cette session.]
 
-Recommandations fondamentales: Formule des conseils basés uniquement sur l'analyse des fondamentaux économiques, sans aucune référence aux niveaux techniques ou graphiques.`;
+Recommandations Fondamentales:
+[Formule des conseils basés uniquement sur l'analyse des fondamentaux économiques.]`;
       
       if (Object.keys(economicData).length > 0) {
         prompt += `\n\nDonnées économiques FRED à analyser dans ton approche fondamentale:`;
