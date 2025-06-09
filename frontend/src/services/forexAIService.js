@@ -309,7 +309,8 @@ Termine par: Recommandation [ACHAT/VENTE/NEUTRE] avec [65-90] pour cent de confi
 Produis une analyse en français professionnel naturel, structurée en paragraphes distincts. Maximum 350 mots.`;
       
       
-      const aiResponse = await this.callPerplexityAI(prompt);
+      const aiResponse = await this.callAI(prompt);
+      const aiSource = this.isClaudeReady() ? 'Claude 3.5 Sonnet (Optimisé)' : 'Perplexity AI (Optimisé)';
       console.log(`✅ Fresh currency analysis generated for ${currency}`);
       
       // Parse the structured response
