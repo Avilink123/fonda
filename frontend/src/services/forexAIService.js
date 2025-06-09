@@ -4,6 +4,7 @@ import { API_CONFIG, apiHelpers } from './apiConfig';
 class ForexAIService {
   constructor() {
     this.perplexityApiKey = process.env.REACT_APP_PERPLEXITY_API_KEY;
+    this.claudeApiKey = process.env.REACT_APP_CLAUDE_API_KEY;
     this.fredApiKey = process.env.REACT_APP_FRED_API_KEY;
     this.isInitialized = true;
     
@@ -14,8 +15,11 @@ class ForexAIService {
       { hour: 17, minute: 0, name: "Récap de Fin de Journée" } // 5:00 PM GMT
     ];
     
-    if (this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key') {
-      console.log('🤖 ForexAI Service initialized with Perplexity AI');
+    if (this.claudeApiKey && this.claudeApiKey !== 'placeholder_for_claude_key') {
+      console.log('🤖 ForexAI Service initialized with Claude 3.5 Sonnet');
+      console.log('⏰ Scheduled reports: 7:00, 12:00, 17:00 GMT');
+    } else if (this.perplexityApiKey && this.perplexityApiKey !== 'placeholder_for_perplexity_key') {
+      console.log('🤖 ForexAI Service initialized with Perplexity AI (fallback)');
       console.log('⏰ Scheduled reports: 7:00, 12:00, 17:00 GMT');
     }
   }
