@@ -812,83 +812,83 @@ Fournis une analyse fondamentale complète de cette devise.`;
     return 'neutre';
   }
 
-  // Parse currency analysis from AI response (Fixed & Clean)
+  // Parse currency analysis from AI response (Structured Format)
   parseCurrencyAnalysis(aiResponse) {
     try {
       // Clean the response completely first
       const cleanResponse = this.cleanText(aiResponse);
       
-      // Split into meaningful paragraphs (minimum 30 characters)
-      const paragraphs = cleanResponse.split('\n\n')
-        .map(p => p.trim())
-        .filter(p => p.length > 30);
+      // Extract structured sections with titles
+      const contextMatch = cleanResponse.match(/Contexte Macroéconomique:\s*(.*?)(?=Politique Monétaire|$)/is);
+      const monetaryMatch = cleanResponse.match(/Politique Monétaire:\s*(.*?)(?=Environnement Économique|$)/is);
+      const economicMatch = cleanResponse.match(/Environnement Économique:\s*(.*?)(?=Facteurs Fondamentaux|$)/is);
+      const externalMatch = cleanResponse.match(/Facteurs Fondamentaux Externes:\s*(.*?)(?=Perspective Économique|$)/is);
+      const perspectiveMatch = cleanResponse.match(/Perspective Économique:\s*(.*?)(?=Recommandation|$)/is);
+      const recommendationMatch = cleanResponse.match(/Recommandation:\s*(ACHAT|VENTE|NEUTRE).*?(\d{2,3})\s*pour\s*cent/is);
       
-      // Extract key factors as clean sentences from paragraphs
+      // Build clean key factors from structured sections
       const keyFactors = [];
       
-      // Take meaningful parts from each paragraph (excluding first and last)
-      paragraphs.slice(1, -1).forEach(paragraph => {
-        // Split paragraph into sentences and take the most meaningful one
-        const sentences = paragraph.split('.').filter(s => s.trim().length > 20);
-        if (sentences.length > 0) {
-          // Take the longest meaningful sentence
-          const bestSentence = sentences.reduce((a, b) => a.length > b.length ? a : b);
-          keyFactors.push(bestSentence.trim() + '.');
-        }
-      });
+      if (contextMatch && contextMatch[1]) {
+        keyFactors.push("Contexte macroéconomique: " + contextMatch[1].trim().substring(0, 100) + ".");
+      }
       
-      // If we don't have enough factors, create generic professional ones
+      if (monetaryMatch && monetaryMatch[1]) {
+        keyFactors.push("Politique monétaire: " + monetaryMatch[1].trim().substring(0, 100) + ".");
+      }
+      
+      if (economicMatch && economicMatch[1]) {
+        keyFactors.push("Environnement économique: " + economicMatch[1].trim().substring(0, 100) + ".");
+      }
+      
+      if (externalMatch && externalMatch[1]) {
+        keyFactors.push("Facteurs externes: " + externalMatch[1].trim().substring(0, 100) + ".");
+      }
+      
+      // If we don't have enough structured sections, add generic ones
       while (keyFactors.length < 4) {
         const genericFactors = [
-          "La banque centrale maintient une politique monétaire équilibrée.",
-          "Les données économiques récentes montrent une stabilité relative.",
-          "Le sentiment de marché reflète une approche prudente des investisseurs.",
-          "Les facteurs géopolitiques influencent modérément cette devise."
+          "Analyse des données économiques récentes et de leur impact sur la devise.",
+          "Évaluation de la politique monétaire de la banque centrale.",
+          "Surveillance des facteurs géopolitiques et commerciaux.",
+          "Suivi des indicateurs macroéconomiques clés."
         ];
         keyFactors.push(genericFactors[keyFactors.length]);
       }
       
-      // Extract recommendation and confidence from the end
-      const lastParagraph = paragraphs[paragraphs.length - 1] || "";
+      // Extract recommendation and confidence
       let aiRating = "NEUTRE";
       let confidence = 75;
       
-      const recommendationMatch = lastParagraph.match(/(ACHAT|VENTE|NEUTRE)/i);
-      const confidenceMatch = lastParagraph.match(/(\d{2,3})\s*pour\s*cent/i);
-      
-      if (recommendationMatch) aiRating = recommendationMatch[1].toUpperCase();
-      if (confidenceMatch) confidence = parseInt(confidenceMatch[1]);
-      
-      // Determine professional sentiment from overall tone
-      const fullText = cleanResponse.toLowerCase();
-      let sentiment = "Analyse neutre";
-      if (fullText.includes('hausse') || fullText.includes('positif') || fullText.includes('soutien') || fullText.includes('fort')) {
-        sentiment = "Tendance favorable";
-      } else if (fullText.includes('baisse') || fullText.includes('négatif') || fullText.includes('pression') || fullText.includes('faible')) {
-        sentiment = "Vigilance requise";
-      } else {
-        sentiment = "Stabilité surveillée";
+      if (recommendationMatch) {
+        aiRating = recommendationMatch[1].toUpperCase();
+        confidence = parseInt(recommendationMatch[2]) || 75;
       }
       
-      // Find the best forecast paragraph (usually the second or third one)
-      const forecastParagraph = paragraphs.find(p => 
-        p.length > 80 && 
-        !p.toLowerCase().includes('recommandation') && 
-        !p.toLowerCase().includes('pour cent')
-      ) || paragraphs[1] || cleanResponse;
+      // Determine sentiment from overall analysis
+      const fullText = cleanResponse.toLowerCase();
+      let sentiment = "Analyse équilibrée";
+      if (fullText.includes('favorable') || fullText.includes('positif') || fullText.includes('soutien')) {
+        sentiment = "Tendance favorable";
+      } else if (fullText.includes('défavorable') || fullText.includes('négatif') || fullText.includes('pression')) {
+        sentiment = "Vigilance requise";
+      }
+      
+      // Use perspective as forecast
+      const forecast = perspectiveMatch?.[1]?.trim() || contextMatch?.[1]?.trim() || cleanResponse.substring(0, 350);
       
       return {
         fundamentalScore: Math.floor(Math.random() * 25) + 70, // 70-95 range for fundamental only
         technicalScore: null, // No technical analysis
         sentiment: sentiment,
         keyFactors: keyFactors.slice(0, 4), // Exactly 4 clean factors
-        forecast: forecastParagraph.substring(0, 350) + (forecastParagraph.length > 350 ? "..." : ""),
+        forecast: forecast.substring(0, 350) + (forecast.length > 350 ? "..." : ""),
         aiRating: aiRating,
         confidence: confidence
       };
       
     } catch (error) {
-      console.error('❌ Error parsing fixed currency analysis:', error);
+      console.error('❌ Error parsing structured currency analysis:', error);
       return {
         fundamentalScore: 75,
         technicalScore: null, // No technical analysis
