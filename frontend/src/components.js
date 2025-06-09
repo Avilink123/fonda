@@ -500,37 +500,27 @@ export const CurrencyAnalysis = () => {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
-                  <h4 className="text-lg font-semibold text-slate-900 mb-4">Scores d'Analyse</h4>
+                  <h4 className="text-lg font-semibold text-slate-900 mb-4">Évaluation Fondamentale</h4>
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium text-slate-700">Score Fondamental</span>
                         <span className="text-sm font-bold text-slate-900">{analysisData?.fundamentalScore || 0}/100</span>
                       </div>
-                      <div className="w-full bg-slate-200 rounded-full h-2">
+                      <div className="w-full bg-slate-200 rounded-full h-3">
                         <div 
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-500" 
+                          className="bg-blue-600 h-3 rounded-full transition-all duration-500" 
                           style={{width: `${analysisData?.fundamentalScore || 0}%`}}
                         ></div>
                       </div>
                     </div>
                     
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium text-slate-700">Score Technique</span>
-                        <span className="text-sm font-bold text-slate-900">{analysisData?.technicalScore || 0}/100</span>
-                      </div>
-                      <div className="w-full bg-slate-200 rounded-full h-2">
-                        <div 
-                          className="bg-amber-500 h-2 rounded-full transition-all duration-500" 
-                          style={{width: `${analysisData?.technicalScore || 0}%`}}
-                        ></div>
-                      </div>
-                    </div>
-                    
-                    <div className="pt-4">
-                      <span className="text-sm font-medium text-slate-700">Sentiment IA:</span>
+                    <div className="pt-4 p-4 bg-blue-50 rounded-lg">
+                      <span className="text-sm font-medium text-slate-700">Sentiment Fondamental:</span>
                       <span className="ml-2 text-sm font-semibold text-slate-900">{analysisData?.sentiment || 'Chargement...'}</span>
+                      <div className="text-xs text-slate-600 mt-2">
+                        Basé exclusivement sur l'analyse des fondamentaux économiques
+                      </div>
                     </div>
                   </div>
                 </div>
