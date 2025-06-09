@@ -188,42 +188,35 @@ class ForexAIService {
           break;
       }
       
-      let prompt = `Tu es un analyste forex français réputé. Rédige un rapport de marché professionnel pour ${generationCheck.session}.
-
-INSTRUCTIONS STRICTES:
-- Français naturel uniquement, aucun formatage technique
-- Pas de mots comme "PARAGRAPHE", "TITRE", etc. dans le texte
-- Sépare tes idées par des paragraphes courts
-- Texte fluide et lisible
+      let prompt = `Tu es un analyste forex institutionnel français de premier plan. Rédige une analyse fondamentale approfondie pour ${generationCheck.session}.
 
 ${sessionContext}
 
-Écris ton rapport ainsi:
+ANALYSE REQUISE:
 
-Premier paragraphe: Vue d'ensemble de la situation forex aujourd'hui.
+Vue d'ensemble: Évalue le sentiment général des marchés forex aujourd'hui, en analysant les flux de capitaux, l'aversion au risque et les dynamiques macro-économiques dominantes.
 
-Deuxième paragraphe: Analyse d'EUR/USD avec les facteurs européens et américains.
+EUR/USD: Analyse les dernières décisions de la BCE, l'inflation de la zone euro, la stabilité politique européenne et leur impact sur cette paire face au dollar américain.
 
-Troisième paragraphe: Analyse de GBP/USD avec les éléments britanniques.
+GBP/USD: Examine la politique monétaire de la BoE, les données économiques britanniques post-Brexit, et les facteurs de volatilité spécifiques à la livre sterling.
 
-Quatrième paragraphe: Analyse d'USD/JPY avec la politique japonaise.
+USD/JPY: Évalue la divergence entre les politiques monétaires Fed/BoJ, les risques d'intervention du Japon, et les flux de carry trade affectant cette paire.
 
-Cinquième paragraphe: Trois facteurs de risque importants à surveiller.
+Facteurs de risque: Identifie trois catalyseurs majeurs qui pourraient déclencher de la volatilité cette session, en expliquant leur mécanisme d'impact.
 
-Dernier paragraphe: Tes recommandations pour les traders aujourd'hui.
-
-Maximum 350 mots. Style professionnel mais accessible.`;
+Recommandations trading: Formule des conseils stratégiques concrets pour les traders institutionnels, incluant la gestion de risque appropriée.`;
       
       if (Object.keys(economicData).length > 0) {
-        prompt += `\n\nDonnées économiques à mentionner naturellement dans ton analyse:`;
+        prompt += `\n\nDonnées économiques FRED à intégrer dans ton analyse:`;
         Object.entries(economicData).forEach(([indicator, data]) => {
           prompt += `\n${indicator}: ${data.value} (${data.date})`;
         });
       }
 
-      prompt += `\n\nRAPPEL: Texte pur seulement, pas de formatage, phrases complètes et naturelles.`;
+      prompt += `\n\nProduis une analyse en français naturel, structurée en paragraphes distincts. Style: institutionnel mais accessible. Maximum 400 mots.`;
       
-      const aiResponse = await this.callPerplexityAI(prompt);
+      const aiResponse = await this.callAI(prompt);
+      const aiSource = this.isClaudeReady() ? 'Claude 3.5 Sonnet + FRED Data' : 'Perplexity AI + FRED Data';
       console.log(`✅ Scheduled report generated for ${generationCheck.session}`);
       
       // Parse the structured response
