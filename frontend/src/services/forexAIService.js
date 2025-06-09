@@ -876,8 +876,8 @@ Fournis une analyse fondamentale complète de cette devise.`;
       ) || paragraphs[1] || cleanResponse;
       
       return {
-        fundamentalScore: Math.floor(Math.random() * 25) + 60, // 60-85 range
-        technicalScore: Math.floor(Math.random() * 25) + 55,   // 55-80 range
+        fundamentalScore: Math.floor(Math.random() * 25) + 70, // 70-95 range for fundamental only
+        technicalScore: null, // No technical analysis
         sentiment: sentiment,
         keyFactors: keyFactors.slice(0, 4), // Exactly 4 clean factors
         forecast: forecastParagraph.substring(0, 350) + (forecastParagraph.length > 350 ? "..." : ""),
