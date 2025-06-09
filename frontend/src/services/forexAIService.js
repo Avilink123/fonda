@@ -365,8 +365,51 @@ Maximum 300 mots. Français fluide et professionnel uniquement.`;
 
   // Private Methods
 
+  // Call Claude 3.5 Sonnet for high-quality financial analysis
+  async callClaudeAI(prompt) {
+    console.log('🧠 Calling Claude 3.5 Sonnet for financial analysis...');
+    
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.claudeApiKey}`,
+          'Content-Type': 'application/json',
+          'x-api-key': this.claudeApiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-sonnet-20241022',
+          max_tokens: 2000,
+          temperature: 0.1, // Low temperature for financial precision
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Claude API Error:', response.status, errorText);
+        throw new Error(`Claude API error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Claude 3.5 Sonnet analysis received');
+      return data.content[0].text;
+      
+    } catch (error) {
+      console.error('❌ Error calling Claude AI:', error);
+      throw error;
+    }
+  }
+
+  // Call Perplexity AI (fallback)
   async callPerplexityAI(prompt) {
-    console.log('🤖 Calling Perplexity AI with prompt:', prompt.substring(0, 100) + '...');
+    console.log('🤖 Calling Perplexity AI (fallback)...');
     
     try {
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -402,12 +445,31 @@ Maximum 300 mots. Français fluide et professionnel uniquement.`;
       }
 
       const data = await response.json();
-      console.log('✅ Perplexity AI Response received');
+      console.log('✅ Perplexity AI Response received (fallback)');
       return data.choices[0].message.content;
       
     } catch (error) {
       console.error('❌ Error calling Perplexity AI:', error);
       throw error;
+    }
+  }
+
+  // Smart AI call - Claude preferred, Perplexity fallback
+  async callAI(prompt) {
+    if (this.isClaudeReady()) {
+      try {
+        return await this.callClaudeAI(prompt);
+      } catch (error) {
+        console.log('⚠️ Claude failed, trying Perplexity fallback...');
+        if (this.perplexityApiKey) {
+          return await this.callPerplexityAI(prompt);
+        }
+        throw error;
+      }
+    } else if (this.perplexityApiKey) {
+      return await this.callPerplexityAI(prompt);
+    } else {
+      throw new Error('No AI service available');
     }
   }
 
