@@ -888,14 +888,14 @@ Fournis une analyse fondamentale complète de cette devise.`;
     } catch (error) {
       console.error('❌ Error parsing fixed currency analysis:', error);
       return {
-        fundamentalScore: 70,
-        technicalScore: 65,
-        sentiment: "Analyse en cours",
+        fundamentalScore: 75,
+        technicalScore: null, // No technical analysis
+        sentiment: "Analyse fondamentale en cours",
         keyFactors: [
           "Évaluation des politiques monétaires en cours.",
           "Surveillance des indicateurs économiques clés.",
-          "Analyse du sentiment de marché institutionnel.",
-          "Considération des facteurs géopolitiques actuels."
+          "Analyse des fondamentaux macroéconomiques.",
+          "Considération des facteurs géopolitiques économiques."
         ],
         forecast: this.cleanText(aiResponse).substring(0, 350),
         aiRating: "NEUTRE",
