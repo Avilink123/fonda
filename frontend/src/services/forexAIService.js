@@ -188,32 +188,32 @@ class ForexAIService {
           break;
       }
       
-      let prompt = `Tu es un analyste forex institutionnel français de premier plan. Rédige une analyse fondamentale approfondie pour ${generationCheck.session}.
+      let prompt = `Tu es un analyste forex fondamental institutionnel français de premier plan. Rédige une analyse fondamentale pure pour ${generationCheck.session}.
 
 ${sessionContext}
 
-ANALYSE REQUISE:
+ANALYSE FONDAMENTALE UNIQUEMENT:
 
-Vue d'ensemble: Évalue le sentiment général des marchés forex aujourd'hui, en analysant les flux de capitaux, l'aversion au risque et les dynamiques macro-économiques dominantes.
+Vue d'ensemble économique: Évalue le climat économique global aujourd'hui, en analysant les flux de capitaux internationaux, les politiques des banques centrales et les dynamiques macro-économiques dominantes.
 
-EUR/USD: Analyse les dernières décisions de la BCE, l'inflation de la zone euro, la stabilité politique européenne et leur impact sur cette paire face au dollar américain.
+EUR/USD fondamental: Analyse exclusivement les facteurs fondamentaux: dernières décisions BCE, inflation zone euro, croissance économique européenne, politique fiscale, et compare avec les fondamentaux américains (Fed, inflation US, emploi).
 
-GBP/USD: Examine la politique monétaire de la BoE, les données économiques britanniques post-Brexit, et les facteurs de volatilité spécifiques à la livre sterling.
+GBP/USD fondamental: Examine uniquement les éléments fondamentaux: politique monétaire BoE, données économiques britanniques post-Brexit, inflation UK, croissance PIB, et facteurs structurels de l'économie britannique.
 
-USD/JPY: Évalue la divergence entre les politiques monétaires Fed/BoJ, les risques d'intervention du Japon, et les flux de carry trade affectant cette paire.
+USD/JPY fondamental: Évalue la divergence fondamentale entre économies américaine et japonaise: politiques monétaires Fed/BoJ, inflation comparative, croissance économique, déficits commerciaux et flux de capitaux.
 
-Facteurs de risque: Identifie trois catalyseurs majeurs qui pourraient déclencher de la volatilité cette session, en expliquant leur mécanisme d'impact.
+Catalyseurs économiques: Identifie trois facteurs économiques fondamentaux majeurs qui pourraient impacter les devises cette session: annonces de banques centrales, données macro, politiques gouvernementales.
 
-Recommandations trading: Formule des conseils stratégiques concrets pour les traders institutionnels, incluant la gestion de risque appropriée.`;
+Recommandations fondamentales: Formule des conseils basés uniquement sur l'analyse des fondamentaux économiques, sans aucune référence aux niveaux techniques ou graphiques.`;
       
       if (Object.keys(economicData).length > 0) {
-        prompt += `\n\nDonnées économiques FRED à intégrer dans ton analyse:`;
+        prompt += `\n\nDonnées économiques FRED à analyser dans ton approche fondamentale:`;
         Object.entries(economicData).forEach(([indicator, data]) => {
           prompt += `\n${indicator}: ${data.value} (${data.date})`;
         });
       }
 
-      prompt += `\n\nProduis une analyse en français naturel, structurée en paragraphes distincts. Style: institutionnel mais accessible. Maximum 400 mots.`;
+      prompt += `\n\nProduis une analyse fondamentale pure en français naturel, structurée en paragraphes distincts. AUCUNE analyse technique, graphiques ou niveaux de prix. Focus exclusif sur économie, politique monétaire et fondamentaux. Maximum 400 mots.`;
       
       const aiResponse = await this.callAI(prompt);
       const aiSource = this.isClaudeReady() ? 'Claude 3.5 Sonnet + FRED Data' : 'Perplexity AI + FRED Data';
